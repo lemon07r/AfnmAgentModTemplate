@@ -144,6 +144,7 @@ This template is designed to work with any AI coding agent. Here are some good o
 
 ### Free tiers / generous plans
 
+- **[Google Antigravity](https://idx.google.com/antigravity)** — Google's agent-first IDE. Free tier with Gemini. Reads `GEMINI.md` and `AGENTS.md`.
 - **[Cursor](https://cursor.com)** — AI-native code editor with a free tier. Reads `.cursor/rules/` for scoped skills.
 - **[Windsurf](https://windsurf.com)** — AI code editor with a free tier. Reads `.windsurf/rules/`.
 - **[GitHub Copilot](https://github.com/features/copilot)** — Free for students, educators, and open-source maintainers. Reads `.github/copilot-instructions.md`.
