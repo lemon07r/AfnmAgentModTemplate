@@ -1,0 +1,16 @@
+node_modules/
+dist/
+builds/
+mods/
+tmp/
+settings.json
+*.log
+.env
+.env.*
+!.env.example
+.vera/
+.agent/
+.agents/
+.claude/
+.factory/
+.junie/
