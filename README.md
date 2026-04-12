@@ -4,6 +4,8 @@ A reusable starter repo for building *Ascend From Nine Mountains* mods with a wo
 
 Validated against the installed AFNM runtime `0.6.50-c2637ae` on `2026-04-11`.
 
+If you are handing this repo to an AI coding agent, have it read [AGENTS.md](./AGENTS.md) first.
+
 ## What this template gives you
 
 - a modular TypeScript + webpack scaffold instead of a single-file throwaway mod
@@ -13,6 +15,17 @@ Validated against the installed AFNM runtime `0.6.50-c2637ae` on `2026-04-11`.
 - preinstalled React/MUI dependencies so UI work does not start with dependency churn
 
 Use the upstream [AfnmExampleMod](https://github.com/Lyeeedar/AfnmExampleMod) repo as the content/API reference. Use this repo as the implementation scaffold you actually clone for new work.
+
+## Why this repo exists
+
+`AfnmExampleMod` is the right upstream API/content reference, but it is not optimized as a modern starter scaffold for iterative mod shipping.
+
+This template exists to give you:
+
+- a cleaner build and packaging baseline
+- a real settings/debug scaffold instead of throwaway sample code
+- installed-runtime validation scripts for checking live game behavior quickly
+- repository guidance tuned for future work by AI coding agents as well as humans
 
 ## Quick Start
 
@@ -30,6 +43,14 @@ Use the upstream [AfnmExampleMod](https://github.com/Lyeeedar/AfnmExampleMod) re
 7. Copy `builds/<package-name>.zip` into the installed game's `mods/` directory.
 
 The template exposes a debug surface at `window.__afnmModDebug['<package-name>']`.
+
+## Replace These First
+
+Before you do real feature work, update:
+
+- `package.json` metadata and `afnmWorkshop` fields
+- the example settings/debug logic in `src/modContent/index.ts`
+- any placeholder public copy in this README if you keep it in your own repo
 
 ## Layout
 
@@ -71,6 +92,13 @@ Workshop upload:
 ```bash
 bun run workshop:upload -- --change-note "v0.1.0 - Initial release" --allow-create
 ```
+
+Before the first public upload, make sure you have set:
+
+- `afnmWorkshop.title`
+- `afnmWorkshop.description`
+- `afnmWorkshop.previewImagePath`
+- either `afnmWorkshop.workshopId` or `--allow-create`
 
 ## Recommended Architecture
 
