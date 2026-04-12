@@ -12,50 +12,98 @@ Unless noted otherwise, the runtime statements below were rechecked against the 
 
 ## 1. Pick The Right Mod Shape First
 
-Do not start with code. Start with the mod category.
+Do not start with code. Start with the mod category. This determines which parts of the ModAPI you lean on and how to structure the project.
+
+### Content addition
+
+The most common mod type. You add new items, characters, locations, quests, events, recipes, enemies, or crafting techniques to the game world.
+
+Default stack:
+
+- `actions.addItem()`, `actions.addLocation()`, `actions.addQuest()`, etc.
+- `actions.addItemToShop()`, `actions.linkLocations()`, `actions.addEventsToLocation()` for integration
+- asset imports for icons and backgrounds
+- event step definitions for narrative
+
+Use the upstream [AfnmExampleMod docs](https://lyeeedar.github.io/AfnmExampleMod/) as the primary content reference for this shape.
+
+### Narrative / story
+
+Quest chains, branching event sequences, calendar events, triggered events, and companion interactions. A specialization of content addition focused on event flow rather than items.
+
+Default stack:
+
+- `actions.addQuest()`, `actions.addCalendarEvent()`, `actions.addTriggeredEvent()`
+- event step arrays with `kind: 'text'`, `kind: 'choice'`, `kind: 'speech'`, etc.
+- `utils.createQuestionAnswerList()` for branching dialogue
+- flags for tracking quest progress and branching state
+
+### Quality-of-life / UI tool
+
+Custom screens, stat viewers, inventory helpers, map tools, crafting assistants, or any mod that adds a new interface.
+
+Default stack:
+
+- `addScreen()` for full-page interfaces
+- `injectUI()` for small affordances in existing dialogs
+- `useSelector()` and `useGameFlags()` inside screen components
+- persistent overlay mounted to `document.body` if the UI must survive screen transitions
+- `actions.setModData()` for persistent mod state in save files
 
 ### Gameplay modifier
 
-Use this when you are changing probabilities, rewards, event pools, stat math, or settings-driven behavior.
+Changes probabilities, rewards, event pools, stat math, difficulty, or any settings-driven behavior without adding new content.
 
 Default stack:
 
-- hooks
+- mutation hooks (`onCalculateDamage`, `onBeforeCombat`, `onDeriveRecipeDifficulty`, `onEventDropItem`, `onGenerateExploreEvents`)
 - numeric global flags for settings
-- minimal or no custom UI
+- `registerOptionsUI()` for a settings panel
+- minimal or no custom UI beyond settings
 
-Good examples:
+### Overhaul / rebalance
 
-- Lucky All Around
+Wholesale changes to game balance — enemy stats, crafting difficulty, damage formulas, reward scaling. A larger-scale version of gameplay modifier.
+
+Default stack:
+
+- `onCreateEnemyCombatEntity` for enemy stat changes
+- `onCalculateDamage` for damage formula changes
+- `onDeriveRecipeDifficulty` for crafting rebalancing
+- `onBeforeCombat` for encounter composition changes
+- `onReduxAction` only as a last resort (runs inside reducer)
+
+### Cosmetic / personalization
+
+Player sprites, alternative starts, new backgrounds, custom rooms, new music or sound effects.
+
+Default stack:
+
+- `actions.addPlayerSprite()`, `actions.addAlternativeStart()`
+- `actions.addBirthBackground()`, `actions.addChildBackground()`, `actions.addTeenBackground()`
+- `actions.addRoom()`, `actions.addMusic()`, `actions.addSfx()`
+- `utils.generateSkipTutorialFlags()` for alternative starts that skip tutorials
 
 ### Read-only advisor or overlay
 
-Use this when the mod explains, visualizes, or recommends without mutating gameplay.
+Explains, visualizes, or recommends without mutating gameplay. Observes game state and presents information.
 
 Default stack:
 
-- `getGameStateSnapshot()`
-- `subscribe()`
-- `injectUI()` for local entry points
-- persistent overlay only if the UI must survive screen/dialog transitions
-
-Good examples:
-
-- ElderGPT Spirit Ring
+- `getGameStateSnapshot()` + `subscribe()` for reactive state
+- `injectUI()` for contextual entry points
+- persistent overlay if the UI must survive screen transitions
+- no mutation hooks — observation only
 
 ### Search / simulation / optimizer
 
-Use this when the mod predicts future turns or compares multiple possible lines.
+Predicts future turns, compares possible lines, or automates decision-making.
 
 Default stack:
 
-- strict separation between live integration and pure simulation
+- strict separation between live game integration and pure simulation logic
 - authoritative local math for hypothetical future-state evaluation
-- replayable fixtures and parity tests
-
-Good examples:
-
-- CraftBuddy
+- replayable test fixtures for validation
 
 ## 2. ModAPI-First Means More Than “Use The API When Convenient”
 
