@@ -105,6 +105,22 @@ Default stack:
 - authoritative local math for hypothetical future-state evaluation
 - replayable test fixtures for validation
 
+### Combining shapes
+
+Most real mods combine multiple shapes. Pick a primary shape to determine your project structure, then layer in secondary shapes as needed.
+
+Common combinations:
+
+- **Content + Narrative**: Items, locations, and quest chains. The most natural combination.
+- **Gameplay modifier + UI tool**: Change probabilities/stats AND provide a settings panel to configure them.
+- **Advisor + UI tool**: Read-only state observation with a persistent overlay AND injected entry points in specific dialogs.
+- **Content + Gameplay modifier**: Add new items/events AND modify existing game behavior through hooks.
+- **Overhaul + Content**: Rebalance existing systems AND add new content designed for the new balance.
+
+When combining, keep each concern in its own module. E.g., hooks in one file, UI in another, content registration in a third. The template’s `src/modContent/` is the integration point — it wires the pieces together.
+
+If your mod doesn’t fit any single shape, start with whichever shape covers your primary feature, then add from others as needed.
+
 ## 2. ModAPI-First Means More Than “Use The API When Convenient”
 
 Use this order deliberately:

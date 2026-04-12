@@ -29,18 +29,21 @@ This template exists to give you:
 
 ## Quick Start
 
-1. Copy this directory into a new repo.
-2. Update `package.json`:
+1. Clone or copy this directory into a new repo.
+2. Run the setup script:
+   ```bash
+   bash scripts/setup.sh
+   ```
+   This installs dependencies, clones the [ModUploader-AFNM](https://github.com/lemon07r/ModUploader-AFNM) sibling repo (needed for Workshop uploads), detects your game installation, and verifies the build works.
+3. Update `package.json`:
    - `name`
    - `version`
    - `description`
    - `author`
-   - `afnmWorkshop.*`
-3. Run `bun install`.
+   - `afnmWorkshop.*` (title, description, tags, visibility)
 4. Replace the example logic in `src/modContent/index.ts`.
-5. Run `bun run typecheck`.
-6. Run `bun run build`.
-7. Copy `builds/<package-name>.zip` into the installed game's `mods/` directory.
+5. Run `bun run build`.
+6. Copy `builds/<package-name>.zip` into the installed game's `mods/` directory.
 
 The template exposes a debug surface at `window.__afnmModDebug['<package-name>']`.
 

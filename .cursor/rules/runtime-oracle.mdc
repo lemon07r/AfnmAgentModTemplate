@@ -1,0 +1,14 @@
+---
+description: "Installed-game runtime oracle for verifying ModAPI surface and game behavior. Activate when checking hook existence, API parity, or launcher behavior."
+globs:
+alwaysApply: false
+---
+
+See `docs/skills/runtime-oracle.md`.
+
+Commands:
+- `bun run runtime:oracle` — full parity summary
+- `bun run runtime:grep -- "<pattern>"` — search for specific symbols
+- `bun run runtime:extract` — extract the full bundle
+
+The installed runtime is the source of truth when docs, types, and behavior disagree.

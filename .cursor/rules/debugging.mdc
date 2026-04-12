@@ -1,0 +1,13 @@
+---
+description: "Systematic debugging methodology for AFNM mods. Activate when errors occur or fixes aren't working."
+globs:
+alwaysApply: false
+---
+
+See `docs/skills/systematic-debugging.md`.
+
+Four phases: Root Cause Investigation → Pattern Analysis → Hypothesis Testing → Implementation.
+- Stop after 3 failed fix attempts. Re-examine assumptions.
+- Check SUPPLEMENTARY_GUIDE.md section 3 and 7 first.
+- Use `bun run runtime:grep -- "<symbol>"` before guessing.
+- Never fix without understanding why the fix works.

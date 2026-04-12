@@ -1,0 +1,18 @@
+---
+description: "TypeScript conventions for AFNM mods. Activate when writing or reviewing TypeScript code."
+globs:
+  - "src/**/*.ts"
+  - "src/**/*.tsx"
+alwaysApply: false
+---
+
+See `docs/skills/typescript-afnm.md`.
+
+Key rules:
+- Strict mode is on. Never disable it.
+- Always optional-chain ModAPI access: `window.modAPI?.hooks?.onLocationEnter?.()`
+- Never use `any`. Use `unknown` and narrow with type guards.
+- React/MUI are externalized — never bundle them.
+- Import game types from `afnm-types`.
+- Run `bun run typecheck` before committing.
+- Formatting: 2 spaces, single quotes, trailing commas, LF (`.prettierrc`).

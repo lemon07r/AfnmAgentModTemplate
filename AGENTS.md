@@ -8,6 +8,7 @@ This template is the default starting point for new *Ascend From Nine Mountains*
 2. `SUPPLEMENTARY_GUIDE.md` — deep patterns and pitfalls from shipping real mods
 3. `docs/reference/MODAPI_QUICK_REFERENCE.md` — compact cheat sheet of every hook, action, and util
 4. `docs/reference/AFNM_MODDING.md` — practical reference: upstream sources, fallback ladder, game code patterns
+5. `docs/skills/` — workflow-specific skills (runtime oracle, debugging, validation, publishing, etc.)
 
 ## Project Layout
 

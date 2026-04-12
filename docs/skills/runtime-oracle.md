@@ -1,0 +1,36 @@
+# Skill: Runtime Oracle
+
+Use the installed-game runtime oracle to verify ModAPI surface, hook existence, and launcher behavior before making assumptions based on docs or types.
+
+## When to activate
+
+- Before using any ModAPI hook or method you haven't verified exists in the current runtime
+- When docs, types, and observed behavior disagree
+- When checking if a new game update changed the API surface
+- Before building against undocumented behavior
+
+## Workflow
+
+```bash
+# Print full parity summary (version, hooks, launcher behavior)
+bun run runtime:oracle
+
+# Search for specific API symbols
+bun run runtime:grep -- "registerOptionsUI|injectUI|onGenerateExploreEvents"
+
+# Check if a specific hook exists
+bun run runtime:grep -- "onAdvanceDay|onAdvanceMonth"
+
+# Check launcher behavior
+bun run runtime:grep -- "disable_steam|Restarting app through Steam"
+
+# Extract the full bundle for manual inspection
+bun run runtime:extract
+```
+
+## Rules
+
+- The extracted runtime is the source of truth. When docs say one thing and the runtime says another, trust the runtime.
+- Cache is fingerprinted by asar file size + mtime. It auto-invalidates on game updates.
+- Override game path with `AFNM_GAME_DIR="/path/to/game" bun run runtime:oracle` if auto-detection fails.
+- Do NOT launch the full game just to confirm a symbol exists. The oracle is faster and non-disruptive.

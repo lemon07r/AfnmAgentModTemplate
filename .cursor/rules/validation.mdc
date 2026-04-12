@@ -1,0 +1,13 @@
+---
+description: "Pre-commit and pre-release validation for AFNM mods. Activate before committing, pushing, or claiming work is done."
+globs:
+alwaysApply: false
+---
+
+See `docs/skills/pre-commit-validation.md`.
+
+Before any commit: `bun run typecheck && bun run build`
+Before any release: `bun run release:validate`
+Before claiming a hook exists: `bun run runtime:grep -- "<hook-name>"`
+Check `git diff` for secrets before committing.
+Follow commit conventions: `feat:`, `fix:`, `docs:`, `perf:`, `chore:`.
