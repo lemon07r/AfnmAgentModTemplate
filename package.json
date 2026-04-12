@@ -25,6 +25,7 @@
     "postbuild": "node scripts/zip-dist.js",
     "release:validate": "bun run typecheck && bun run build && bun run runtime:oracle",
     "workshop:upload": "bun run scripts/workshop-upload.ts",
+    "setup": "node scripts/setup.js",
     "runtime:oracle": "node scripts/installed-game-runtime.js summary",
     "runtime:extract": "node scripts/installed-game-runtime.js extract",
     "runtime:grep": "node scripts/installed-game-runtime.js grep"

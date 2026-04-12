@@ -32,9 +32,11 @@ This template exists to give you:
 1. Clone or copy this directory into a new repo.
 2. Run the setup script:
    ```bash
-   bash scripts/setup.sh
+   node scripts/setup.js
+   # Or if bun is already installed:
+   bun run setup
    ```
-   This installs dependencies, clones the [ModUploader-AFNM](https://github.com/lemon07r/ModUploader-AFNM) sibling repo (needed for Workshop uploads), detects your game installation, and verifies the build works.
+   This installs dependencies, clones the [ModUploader-AFNM](https://github.com/lemon07r/ModUploader-AFNM) sibling repo (needed for Workshop uploads), detects your game installation, and verifies the build works. Works on Windows, macOS, and Linux.
 3. Update `package.json`:
    - `name`
    - `version`
