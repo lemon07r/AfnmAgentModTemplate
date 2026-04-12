@@ -19,7 +19,7 @@
   },
   "main": "mod.js",
   "scripts": {
-    "prebuild": "rm -rf dist",
+    "prebuild": "node scripts/clean-dist.js",
     "typecheck": "tsc --noEmit",
     "build": "webpack --mode production",
     "postbuild": "node scripts/zip-dist.js",

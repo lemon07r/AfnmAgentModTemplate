@@ -189,15 +189,41 @@ function main() {
         fail('Missing grep pattern.');
       }
 
-      const result = childProcess.spawnSync(
+      const searchDir = path.join(extractDir, 'dist-electron');
+
+      // Try ripgrep first, fall back to Node-based grep for Windows compatibility
+      const rgResult = childProcess.spawnSync(
         'rg',
-        ['-n', pattern, path.join(extractDir, 'dist-electron')],
-        {
-          cwd: ROOT,
-          stdio: 'inherit',
-        },
+        ['-n', pattern, searchDir],
+        { cwd: ROOT, stdio: 'inherit' },
       );
-      process.exit(result.status ?? 1);
+
+      if (rgResult.error && rgResult.error.code === 'ENOENT') {
+        console.log('ripgrep (rg) not found, using built-in search...\n');
+        const files = [];
+        function walkDir(dir) {
+          for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+            const full = path.join(dir, entry.name);
+            if (entry.isDirectory()) walkDir(full);
+            else if (entry.isFile() && /\.(js|ts|json)$/i.test(entry.name)) files.push(full);
+          }
+        }
+        walkDir(searchDir);
+        const regex = new RegExp(pattern);
+        let found = false;
+        for (const file of files) {
+          const lines = fs.readFileSync(file, 'utf8').split('\n');
+          for (let i = 0; i < lines.length; i++) {
+            if (regex.test(lines[i])) {
+              console.log(`${path.relative(ROOT, file)}:${i + 1}:${lines[i]}`);
+              found = true;
+            }
+          }
+        }
+        process.exit(found ? 0 : 1);
+      }
+
+      process.exit(rgResult.status ?? 1);
     }
     case 'help':
     case '--help':

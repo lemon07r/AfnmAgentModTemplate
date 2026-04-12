@@ -24,8 +24,13 @@ agent-browser --version
 ### 1. Launch game with remote debugging
 
 ```bash
+# Linux/macOS:
 touch "/path/to/Ascend From Nine Mountains/disable_steam"
 "/path/to/Ascend From Nine Mountains/Ascend From Nine Mountains" --remote-debugging-port=9222 &
+
+# Windows (PowerShell):
+New-Item "C:\...\Ascend From Nine Mountains\disable_steam" -ItemType File
+Start-Process "C:\...\Ascend From Nine Mountains\Ascend From Nine Mountains.exe" "--remote-debugging-port=9222"
 ```
 
 ### 2. Connect agent-browser
@@ -50,7 +55,10 @@ agent-browser eval --url "http://localhost:9222" --js "JSON.stringify(window.__a
 ### 4. Clean up
 
 ```bash
+# Linux/macOS:
 rm "/path/to/Ascend From Nine Mountains/disable_steam"
+# Windows (PowerShell):
+Remove-Item "C:\...\Ascend From Nine Mountains\disable_steam"
 ```
 
 ## Rules

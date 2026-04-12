@@ -133,10 +133,36 @@ If you do need a real client smoke test:
 2. launch through the platform's direct executable or native launcher
 3. remove `disable_steam` when you finish, or Workshop mods will stop loading
 
+## Recommended AI Coding Agents
+
+This template is designed to work with any AI coding agent. Here are some good options depending on your budget:
+
+### Free
+
+- **[Gemini CLI](https://github.com/google-gemini/gemini-cli)** — Google's open-source terminal agent. Free with a Google account. Reads `GEMINI.md` automatically.
+- **[Codex CLI](https://github.com/openai/codex)** — OpenAI's open-source terminal agent. Free tier available. Reads `AGENTS.md` automatically.
+
+### Free tiers / generous plans
+
+- **[Cursor](https://cursor.com)** — AI-native code editor with a free tier. Reads `.cursor/rules/` for scoped skills.
+- **[Windsurf](https://windsurf.com)** — AI code editor with a free tier. Reads `.windsurf/rules/`.
+- **[GitHub Copilot](https://github.com/features/copilot)** — Free for students, educators, and open-source maintainers. Reads `.github/copilot-instructions.md`.
+
+### Bring your own API key
+
+- **[Aider](https://aider.chat)** — Open-source terminal agent. Works with any OpenAI/Anthropic/local API. Reads `AGENTS.md`.
+- **[OpenCode](https://opencode.ai)** — Open-source terminal agent. Works with any provider. Reads `AGENTS.md`.
+- **[Cline](https://cline.bot)** — VS Code extension. Works with any provider. Reads `.clinerules`.
+- **[Claude Code](https://docs.anthropic.com/en/docs/claude-code)** — Anthropic's terminal agent. Reads `CLAUDE.md`.
+- **[Droid](https://docs.factory.ai)** — Factory's terminal agent. Works with any provider via BYOK.
+
+This template includes context files for all of the above, so whichever tool you choose, it will find the project rules, ModAPI reference, and workflow skills automatically.
+
 ## Docs To Read Next
 
 - [AGENTS.md](./AGENTS.md) — project rules and validation workflow
 - [SUPPLEMENTARY_GUIDE.md](./SUPPLEMENTARY_GUIDE.md) — deep patterns from shipping real mods
 - [ModAPI Quick Reference](./docs/reference/MODAPI_QUICK_REFERENCE.md) — compact cheat sheet of every hook, action, and util
 - [AFNM Modding Reference](./docs/reference/AFNM_MODDING.md) — upstream sources, fallback ladder, game code patterns
+- [Skills](./docs/skills/) — workflow-specific skills (runtime oracle, debugging, validation, publishing, etc.)
 - [AfnmExampleMod docs](https://lyeeedar.github.io/AfnmExampleMod/) — upstream API and content reference

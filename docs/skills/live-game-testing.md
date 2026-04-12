@@ -13,23 +13,34 @@ Safe workflow for testing mods in the actual game client without Steam relaunch 
 1. Build the mod: `bun run build`
 2. Copy the zip to the game's mods directory:
    ```bash
+   # Linux/macOS:
    cp builds/*.zip "/path/to/Ascend From Nine Mountains/mods/"
+   # Windows (PowerShell):
+   Copy-Item builds\*.zip "C:\Program Files (x86)\Steam\steamapps\common\Ascend From Nine Mountains\mods\"
    ```
 3. Create the disable_steam sentinel:
    ```bash
+   # Linux/macOS:
    touch "/path/to/Ascend From Nine Mountains/disable_steam"
+   # Windows (PowerShell):
+   New-Item "C:\Program Files (x86)\Steam\steamapps\common\Ascend From Nine Mountains\disable_steam" -ItemType File
    ```
 4. Launch the game directly (NOT through Steam):
    ```bash
    # Linux:
    "/path/to/Ascend From Nine Mountains/launch-native.sh"
-   # Or with DevTools:
-   "/path/to/Ascend From Nine Mountains/Ascend From Nine Mountains" --remote-debugging-port=9222
+   # Windows:
+   & "C:\Program Files (x86)\Steam\steamapps\common\Ascend From Nine Mountains\Ascend From Nine Mountains.exe"
+   # With DevTools (any OS):
+   # Add --remote-debugging-port=9222 to the launch command
    ```
 5. Test your mod
 6. **CRITICAL — Clean up when done:**
    ```bash
+   # Linux/macOS:
    rm "/path/to/Ascend From Nine Mountains/disable_steam"
+   # Windows (PowerShell):
+   Remove-Item "C:\Program Files (x86)\Steam\steamapps\common\Ascend From Nine Mountains\disable_steam"
    ```
 
 ## Rules
