@@ -130,6 +130,8 @@ If you do need a real client smoke test:
 
 ## Docs To Read Next
 
-- [AGENTS.md](./AGENTS.md)
-- [SUPPLEMENTARY_GUIDE.md](./SUPPLEMENTARY_GUIDE.md)
-- [AfnmExampleMod docs](https://github.com/Lyeeedar/AfnmExampleMod/tree/main/docs)
+- [AGENTS.md](./AGENTS.md) — project rules and validation workflow
+- [SUPPLEMENTARY_GUIDE.md](./SUPPLEMENTARY_GUIDE.md) — deep patterns from shipping real mods
+- [ModAPI Quick Reference](./docs/reference/MODAPI_QUICK_REFERENCE.md) — compact cheat sheet of every hook, action, and util
+- [AFNM Modding Reference](./docs/reference/AFNM_MODDING.md) — upstream sources, fallback ladder, game code patterns
+- [AfnmExampleMod docs](https://lyeeedar.github.io/AfnmExampleMod/) — upstream API and content reference

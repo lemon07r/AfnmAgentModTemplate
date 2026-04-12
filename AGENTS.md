@@ -2,6 +2,13 @@
 
 This template is the default starting point for new *Ascend From Nine Mountains* mods. Keep it lean, ModAPI-first, and easy for later agents to extend.
 
+## Read Order
+
+1. This file — project layout, commands, rules
+2. `SUPPLEMENTARY_GUIDE.md` — deep patterns and pitfalls from shipping real mods
+3. `docs/reference/MODAPI_QUICK_REFERENCE.md` — compact cheat sheet of every hook, action, and util
+4. `docs/reference/AFNM_MODDING.md` — practical reference: upstream sources, fallback ladder, game code patterns
+
 ## Project Layout
 
 - `src/modContent/index.ts` is the real runtime entrypoint.
@@ -11,6 +18,8 @@ This template is the default starting point for new *Ascend From Nine Mountains*
 - `scripts/zip-dist.js` packages `dist/<package-name>/` into `builds/<package-name>.zip`.
 - `scripts/workshop-upload.ts` publishes through the sibling `../ModUploader-AFNM` repo.
 - `scripts/installed-game-runtime.js` is the installed-runtime oracle; use it before assuming current AFNM behavior.
+- `docs/reference/MODAPI_QUICK_REFERENCE.md` is the compact ModAPI cheat sheet.
+- `docs/reference/AFNM_MODDING.md` is the practical modding reference with upstream links and game code patterns.
 - `SUPPLEMENTARY_GUIDE.md` contains the non-obvious patterns and pitfalls learned from CraftBuddy, Lucky All Around, and ElderGPT Spirit Ring.
 
 ## Commands
