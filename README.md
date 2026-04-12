@@ -69,12 +69,14 @@ Before you do real feature work, update:
   Single source of truth for metadata and `gameVersion` resolution.
 - `scripts/installed-game-runtime.js`
   Installed-runtime oracle for parity checks.
+- `scripts/copy-translations.js`
+  Post-build translation staging — copies locale translation files from `translations/` into the dist folder before zipping, excluding the generated `template.json`.
 - `scripts/workshop-upload.ts`
   Upload wrapper around the sibling `../ModUploader-AFNM` repo.
 - `scripts/zip-dist.js`
-  Post-build packaging — writes dist `package.json`, copies translations, and creates the zip.
+  Post-build packaging — writes dist `package.json` and creates the zip.
 - `translations/`
-  Translation JSON files. Any `.json` files here are automatically copied into the build zip.
+  Translation authoring files. `bun run build` extracts keys before webpack, regenerates `template.json`, then stages locale `.json` files into the build output before zipping.
 - `.github/workflows/release.yml`
   GitHub Actions workflow that builds the mod and creates a GitHub Release on `v*` tags.
 - `AGENTS.md`

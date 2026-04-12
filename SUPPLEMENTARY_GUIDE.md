@@ -285,7 +285,8 @@ If the upload path depends on the sibling `ModUploader-AFNM` repo, document that
 AFNM supports mod translations via JSON files in a `translations/` directory inside the mod zip.
 
 - Place translation files as `translations/<locale>.json` (e.g., `en.json`, `zh.json`)
-- The template's `zip-dist.js` automatically copies `translations/*.json` into the build output
+- Run `bun run build` so `afnm-extract-translations` refreshes extracted keys before webpack
+- The template's `copy-translations.js` stages locale JSON files into the build output before zipping and skips the generated `template.json`
 - Use the `modAPI.utils` text formatting helpers (`loc()`, `itm()`, `char()`, etc.) for styled text — these work with the game's localization system
 - For simple mods, a `template.json` showing the key format is enough to get started
 

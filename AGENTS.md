@@ -16,6 +16,7 @@ This template is the default starting point for new *Ascend From Nine Mountains*
 - `src/mod.ts` is the AFNM mod-loader bootstrap and metadata export.
 - `src/global.d.ts` is the shared typing boundary for `window.modAPI`, runtime React, and the template debug registry.
 - `scripts/mod-package.js` is the single metadata source of truth for build/package scripts.
+- `scripts/copy-translations.js` copies locale JSON files from `translations/` into `dist/<package-name>/translations/` after extraction/build, excluding the generated `template.json`.
 - `scripts/zip-dist.js` packages `dist/<package-name>/` into `builds/<package-name>.zip`.
 - `scripts/workshop-upload.ts` publishes through the sibling `../ModUploader-AFNM` repo.
 - `scripts/installed-game-runtime.js` is the installed-runtime oracle; use it before assuming current AFNM behavior.
@@ -26,6 +27,7 @@ This template is the default starting point for new *Ascend From Nine Mountains*
 ## Commands
 
 - `bun install`
+- `bun run extract-translations`
 - `bun run typecheck`
 - `bun run build`
 - `bun run release:validate` — typecheck + build + runtime:oracle in one step
@@ -71,5 +73,5 @@ This template is the default starting point for new *Ascend From Nine Mountains*
 - The example options panel in `src/modContent/index.ts` is intentionally small but real. Replace it, do not work around it.
 - The template debug surface is `window.__afnmModDebug['<package-name>']`.
 - React/MUI dependencies are already present so future agents can add overlay UI without first reshaping the toolchain.
-- Translation files in `translations/*.json` are automatically copied into the build zip.
+- `bun run build` now runs translation extraction before webpack, then copies locale translation files into the dist output before zipping. The generated `translations/template.json` stays as authoring scaffolding and is not packaged.
 - The `.github/workflows/release.yml` builds the mod and creates a GitHub Release when you push a `v*` tag.

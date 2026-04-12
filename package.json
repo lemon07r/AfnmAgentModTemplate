@@ -19,10 +19,11 @@
   },
   "main": "mod.js",
   "scripts": {
-    "prebuild": "node scripts/clean-dist.js",
+    "extract-translations": "afnm-extract-translations",
+    "prebuild": "node scripts/clean-dist.js && afnm-extract-translations",
     "typecheck": "tsc --noEmit",
     "build": "webpack --mode production",
-    "postbuild": "node scripts/zip-dist.js",
+    "postbuild": "node scripts/copy-translations.js && node scripts/zip-dist.js",
     "release:validate": "bun run typecheck && bun run build && bun run runtime:oracle",
     "workshop:upload": "bun run scripts/workshop-upload.ts",
     "setup": "node scripts/setup.js",
