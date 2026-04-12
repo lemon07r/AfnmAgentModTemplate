@@ -215,3 +215,53 @@ The reliable order is:
 5. only then push/tag any release automation path you keep in git
 
 If the upload path depends on the sibling `ModUploader-AFNM` repo, document that early instead of letting it surprise the next agent.
+
+## 9. Translation Support
+
+AFNM supports mod translations via JSON files in a `translations/` directory inside the mod zip.
+
+- Place translation files as `translations/<locale>.json` (e.g., `en.json`, `zh.json`)
+- The template's `zip-dist.js` automatically copies `translations/*.json` into the build output
+- Use the `modAPI.utils` text formatting helpers (`loc()`, `itm()`, `char()`, etc.) for styled text — these work with the game's localization system
+- For simple mods, a `template.json` showing the key format is enough to get started
+
+## 10. CI/CD With GitHub Actions
+
+The template includes `.github/workflows/release.yml` which:
+
+1. Triggers on `v*` tag pushes
+2. Installs bun and dependencies
+3. Builds the mod
+4. Creates a GitHub Release with the zip artifact
+
+Workflow:
+
+```bash
+# After Workshop upload and commit to main:
+git tag v1.0.0
+git push origin v1.0.0
+# GitHub Actions creates the Release automatically
+```
+
+## 11. Hook Limitations and Missing Coverage
+
+Some game behaviors have no ModAPI interception point. Knowing these saves time:
+
+- **World map events** — events triggered on location entry via `EventTrigger.tsx` have no interception hook. Use `addMapEventsToLocation` or `addEventsToLocation` as alternatives.
+- **Auto-battle state** — not exposed in `getGameStateSnapshot()`. DOM inspection is the only fallback.
+- **Crafting action dispatch** — no public API to dispatch native crafting Redux actions.
+- **Explore event `triggerChance`** — world map event trigger probability has no hook. The explore pool approach via `onGenerateExploreEvents` is the only stable path.
+
+When you discover a new gap, consider filing a request with the game developer rather than building fragile workarounds.
+
+## 12. Defensive Coding Checklist
+
+Before shipping any mod:
+
+- [ ] All `window.modAPI` access uses optional chaining (`?.`)
+- [ ] Duplicate installation guard is in place
+- [ ] Default flag values are initialized on startup
+- [ ] Flag keys are namespaced with mod name prefix
+- [ ] Debug API is exposed on `window.__afnmModDebug`
+- [ ] `disable_steam` cleanup is documented in testing instructions
+- [ ] `bun run release:validate` passes cleanly

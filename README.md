@@ -66,6 +66,12 @@ Before you do real feature work, update:
   Installed-runtime oracle for parity checks.
 - `scripts/workshop-upload.ts`
   Upload wrapper around the sibling `../ModUploader-AFNM` repo.
+- `scripts/zip-dist.js`
+  Post-build packaging — writes dist `package.json`, copies translations, and creates the zip.
+- `translations/`
+  Translation JSON files. Any `.json` files here are automatically copied into the build zip.
+- `.github/workflows/release.yml`
+  GitHub Actions workflow that builds the mod and creates a GitHub Release on `v*` tags.
 - `AGENTS.md`
   Low-noise implementation guidance for future coding agents.
 - `SUPPLEMENTARY_GUIDE.md`
@@ -79,6 +85,9 @@ Build and validation:
 bun run typecheck
 bun run build
 bun run runtime:oracle
+
+# Or run all three in sequence:
+bun run release:validate
 ```
 
 Useful runtime grep examples:

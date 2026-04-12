@@ -18,6 +18,7 @@ This template is the default starting point for new *Ascend From Nine Mountains*
 - `bun install`
 - `bun run typecheck`
 - `bun run build`
+- `bun run release:validate` — typecheck + build + runtime:oracle in one step
 - `bun run runtime:oracle`
 - `bun run runtime:extract`
 - `bun run runtime:grep -- "<pattern>"`
@@ -47,8 +48,18 @@ This template is the default starting point for new *Ascend From Nine Mountains*
 - If you launch the real client directly, create `disable_steam` beside the executable first and delete it when done. Leaving it behind will block Workshop mod loading.
 - Prefer the platform's direct executable or native launcher rather than bouncing back through the Steam UI when you only need a smoke test.
 
+## Release Workflow
+
+1. Finish code and docs.
+2. Run `bun run release:validate`.
+3. Upload to Workshop: `bun run workshop:upload -- --change-note "vX.Y.Z - ..." --allow-create`
+4. Commit and push to `main`.
+5. Tag with `git tag vX.Y.Z && git push origin vX.Y.Z` to trigger the GitHub Release workflow.
+
 ## Template-Specific Notes
 
 - The example options panel in `src/modContent/index.ts` is intentionally small but real. Replace it, do not work around it.
 - The template debug surface is `window.__afnmModDebug['<package-name>']`.
 - React/MUI dependencies are already present so future agents can add overlay UI without first reshaping the toolchain.
+- Translation files in `translations/*.json` are automatically copied into the build zip.
+- The `.github/workflows/release.yml` builds the mod and creates a GitHub Release when you push a `v*` tag.

@@ -23,6 +23,7 @@
     "typecheck": "tsc --noEmit",
     "build": "webpack --mode production",
     "postbuild": "node scripts/zip-dist.js",
+    "release:validate": "bun run typecheck && bun run build && bun run runtime:oracle",
     "workshop:upload": "bun run scripts/workshop-upload.ts",
     "runtime:oracle": "node scripts/installed-game-runtime.js summary",
     "runtime:extract": "node scripts/installed-game-runtime.js extract",
