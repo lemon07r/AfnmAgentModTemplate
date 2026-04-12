@@ -150,7 +150,7 @@ This template is designed to work with any AI coding agent. Here are some good o
 
 ### Bring your own API key
 
-- **[Aider](https://aider.chat)** — Open-source terminal agent. Works with any OpenAI/Anthropic/local API. Reads `AGENTS.md`.
+- **[Codex CLI](https://github.com/openai/codex)** — Also works with any OpenAI-compatible API. Reads `AGENTS.md`.
 - **[OpenCode](https://opencode.ai)** — Open-source terminal agent. Works with any provider. Reads `AGENTS.md`.
 - **[Cline](https://cline.bot)** — VS Code extension. Works with any provider. Reads `.clinerules`.
 - **[Claude Code](https://docs.anthropic.com/en/docs/claude-code)** — Anthropic's terminal agent. Reads `CLAUDE.md`.
