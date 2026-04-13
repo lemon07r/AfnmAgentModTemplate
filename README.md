@@ -154,6 +154,7 @@ This template is designed to work with any AI coding agent.
 - **[Gemini CLI](https://github.com/google-gemini/gemini-cli)** — Google's open-source terminal agent. Free with a Google account. Reads `GEMINI.md` automatically.
 - **[Qwen Code](https://github.com/QwenLM/qwen-code)** — Qwen's open-source terminal coding agent. Reads `AGENTS.md` automatically.
 - **[Mistral CLI](https://github.com/mistralai/mistral-vibe)** — Mistral's open-source terminal coding agent. Reads `AGENTS.md` automatically.
+- **[Kiro](https://kiro.dev)** — Agentic coding IDE with a free tier.
 
 <details>
 <summary>More options: free tiers / generous plans</summary>
