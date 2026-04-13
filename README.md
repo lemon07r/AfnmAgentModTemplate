@@ -59,6 +59,11 @@ Before you do real feature work, update:
 
 ## Layout
 
+Start in `src/modContent/index.ts` for gameplay logic and settings wiring.
+
+<details>
+<summary>Expand full repository layout</summary>
+
 - `src/mod.ts`
   Metadata/bootstrap entry for the AFNM mod loader.
 - `src/modContent/index.ts`
@@ -83,6 +88,8 @@ Before you do real feature work, update:
   Low-noise implementation guidance for future coding agents.
 - `SUPPLEMENTARY_GUIDE.md`
   The deeper strategy guide: architecture choices, gotchas, testing discipline, and advanced patterns.
+
+</details>
 
 ## Default Workflow
 
@@ -129,36 +136,45 @@ Before the first public upload, make sure you have set:
 
 Most tasks should use the installed-runtime oracle, not a live UI launch.
 
-If you do need a real client smoke test:
+<details>
+<summary>If you need a real client smoke test</summary>
 
 1. create the empty `disable_steam` file beside the game executable
 2. launch through the platform's direct executable or native launcher
 3. remove `disable_steam` when you finish, or Workshop mods will stop loading
 
+</details>
+
 ## Recommended AI Coding Agents
 
-This template is designed to work with any AI coding agent. Here are some good options depending on your budget:
+This template is designed to work with any AI coding agent.
 
-### Free
+### Free (quick picks)
 
 - **[Gemini CLI](https://github.com/google-gemini/gemini-cli)** — Google's open-source terminal agent. Free with a Google account. Reads `GEMINI.md` automatically.
 - **[Qwen Code](https://github.com/QwenLM/qwen-code)** — Qwen's open-source terminal coding agent. Reads `AGENTS.md` automatically.
 - **[Mistral CLI](https://github.com/mistralai/mistral-vibe)** — Mistral's open-source terminal coding agent. Reads `AGENTS.md` automatically.
 
-### Free tiers / generous plans
+<details>
+<summary>More options: free tiers / generous plans</summary>
 
 - **[Google Antigravity](https://idx.google.com/antigravity)** — Google's agent-first IDE. Free tier with Gemini. Reads `GEMINI.md` and `AGENTS.md`.
 - **[Cursor](https://cursor.com)** — AI-native code editor with a free tier. Reads `.cursor/rules/` for scoped skills.
 - **[Windsurf](https://windsurf.com)** — AI code editor with a free tier. Reads `.windsurf/rules/`.
 - **[GitHub Copilot](https://github.com/features/copilot)** — Free for students, educators, and open-source maintainers. Reads `.github/copilot-instructions.md`.
 
-### Bring your own API key
+</details>
+
+<details>
+<summary>More options: bring your own API key</summary>
 
 - **[Codex CLI](https://github.com/openai/codex)** — Also works with any OpenAI-compatible API. Reads `AGENTS.md`.
 - **[OpenCode](https://opencode.ai)** — Open-source terminal agent. Works with any provider. Reads `AGENTS.md`.
 - **[Cline](https://cline.bot)** — VS Code extension. Works with any provider. Reads `.clinerules`.
 - **[Claude Code](https://docs.anthropic.com/en/docs/claude-code)** — Anthropic's terminal agent. Reads `CLAUDE.md`.
 - **[Droid](https://docs.factory.ai)** — Factory's terminal agent. Works with any provider via BYOK.
+
+</details>
 
 This template includes context files for all of the above, so whichever tool you choose, it will find the project rules, ModAPI reference, and workflow skills automatically.
 
