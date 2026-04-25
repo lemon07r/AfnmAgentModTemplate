@@ -27,13 +27,15 @@ This template exists to give you:
 - installed-runtime validation scripts for checking live game behavior quickly
 - repository guidance tuned for future work by AI coding agents as well as humans
 
+## Prerequisites
+
+- **[bun](https://bun.sh)** — this template uses bun as its package manager and script runner. All commands (`bun run build`, `bun run typecheck`, etc.) expect bun. Install it with `curl -fsSL https://bun.sh/install | bash` or see [bun.sh](https://bun.sh) for other methods.
+
 ## Quick Start
 
 1. Clone or copy this directory into a new repo.
 2. Run the setup script:
    ```bash
-   node scripts/setup.js
-   # Or if bun is already installed:
    bun run setup
    ```
    This installs dependencies, clones the [ModUploader-AFNM](https://github.com/lemon07r/ModUploader-AFNM) sibling repo (needed for Workshop uploads), detects your game installation, and verifies the build works. Works on Windows, macOS, and Linux.

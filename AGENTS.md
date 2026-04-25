@@ -36,6 +36,15 @@ This template is the default starting point for new *Ascend From Nine Mountains*
 - `bun run runtime:grep -- "<pattern>"`
 - `bun run workshop:upload -- --change-note "vX.Y.Z - ..."`
 
+## Essential Rules
+
+- Always use optional chaining on `window.modAPI` access: `window.modAPI?.hooks?.onLocationEnter?.()`
+- React, ReactDOM, MUI, and MUI Icons are externalized (provided by game runtime) — never bundle them
+- Import game types from the `afnm-types` package
+- Run `bun run typecheck && bun run build` before committing
+- Trust the installed runtime over docs: `bun run runtime:grep -- "<symbol>"`
+- Follow commit prefixes: `feat:`, `fix:`, `docs:`, `perf:`, `chore:`
+
 ## Modding Rules
 
 - Prefer official state access in this order:
@@ -67,6 +76,31 @@ This template is the default starting point for new *Ascend From Nine Mountains*
 3. Upload to Workshop: `bun run workshop:upload -- --change-note "vX.Y.Z - ..." --allow-create`
 4. Commit and push to `main`.
 5. Tag with `git tag vX.Y.Z && git push origin vX.Y.Z` to trigger the GitHub Release workflow.
+
+## Available Skills
+
+Skills in `.agents/skills/` provide workflow-specific guidance (auto-discovered by agents following the agentskills.io standard):
+
+**Start here:**
+- `afnm-modding/SKILL.md` — master orientation: project layout, fallback ladder, task-to-skill routing
+
+**AFNM-specific:**
+- `modapi-lookup/SKILL.md` — hook/action/util reference and classification
+- `typescript-afnm/SKILL.md` — TypeScript conventions for AFNM mods
+- `frontend-mod-ui/SKILL.md` — mod UI design with game components
+- `runtime-oracle/SKILL.md` — verify API surface against the shipped game
+- `live-game-testing/SKILL.md` — disable_steam procedure and automated browser testing
+- `systematic-debugging/SKILL.md` — four-phase debugging methodology
+- `pre-commit-validation/SKILL.md` — evidence before claims
+- `workshop-publishing/SKILL.md` — upload and release lifecycle
+- `conventional-git/SKILL.md` — commit message and branch naming
+
+**General-purpose:**
+- `typescript-best-practices/SKILL.md` — general TypeScript patterns and best practices
+- `frontend-design/SKILL.md` — frontend UI design principles
+- `agent-browser/SKILL.md` — browser automation CLI via CDP
+- `electron/SKILL.md` — Electron app automation via CDP
+- `dogfood/SKILL.md` — systematic exploratory QA for web apps
 
 ## Template-Specific Notes
 
