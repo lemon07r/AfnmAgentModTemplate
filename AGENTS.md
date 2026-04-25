@@ -10,14 +10,6 @@ This template is the default starting point for new *Ascend From Nine Mountains*
 4. `docs/reference/AFNM_MODDING.md` — practical reference: upstream sources, fallback ladder, game code patterns
 5. `.agents/skills/` — workflow-specific skills (runtime oracle, debugging, validation, publishing, etc.)
 
-## Skills
-
-Workflow-specific skills live in `.agents/skills/` following the [agentskills.io](https://agentskills.io/) standard. Each skill is a self-contained directory with a `SKILL.md` file containing YAML frontmatter (`name`, `description`) and task-specific instructions.
-
-Agents that support the standard (Roo Code, Cline, Claude Code, etc.) automatically discover these skills at startup and load them on-demand when your request matches the skill's description. This keeps the base prompt focused while giving the agent deep expertise in specific domains.
-
-For agents that don't support the standard (Cursor, Windsurf), their scoped rules in `.cursor/rules/` and `.windsurf/rules/` reference the same skill content.
-
 ## Project Layout
 
 - `src/modContent/index.ts` is the real runtime entrypoint.

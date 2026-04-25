@@ -173,14 +173,14 @@ This template is designed to work with any AI coding agent.
 
 - **[Codex CLI](https://github.com/openai/codex)** — Also works with any OpenAI-compatible API. Reads `AGENTS.md`.
 - **[OpenCode](https://opencode.ai)** — Open-source terminal agent. Works with any provider. Reads `AGENTS.md`.
-- **[Roo Code](https://roocode.com)** — Successor to Cline. VS Code extension that auto-discovers skills from `.agents/skills/` per the agentskills.io standard. Also reads `.clinerules`.
-- **[Cline](https://cline.bot)** — VS Code extension. Works with any provider. Reads `.clinerules` and `.agents/skills/`.
-- **[Claude Code](https://docs.anthropic.com/en/docs/claude-code)** — Anthropic's terminal agent. Reads `CLAUDE.md` and `.agents/skills/`.
+- **[Roo Code](https://roocode.com)** — Successor to Cline. VS Code extension. Reads `.clinerules`.
+- **[Cline](https://cline.bot)** — VS Code extension. Works with any provider. Reads `.clinerules`.
+- **[Claude Code](https://docs.anthropic.com/en/docs/claude-code)** — Anthropic's terminal agent. Reads `CLAUDE.md`.
 - **[Droid](https://docs.factory.ai)** — Factory's terminal agent. Works with any provider via BYOK.
 
 </details>
 
-This template includes context files for all of the above, so whichever tool you choose, it will find the project rules, ModAPI reference, and workflow skills automatically. Agents following the [agentskills.io](https://agentskills.io/) standard (Roo Code, Cline, Claude Code) additionally get on-demand skill activation from `.agents/skills/`.
+This template includes context files for all of the above, so whichever tool you choose, it will find the project rules, ModAPI reference, and workflow skills automatically.
 
 ## Docs To Read Next
 
