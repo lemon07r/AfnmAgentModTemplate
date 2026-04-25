@@ -1,3 +1,8 @@
+---
+name: typescript-afnm
+description: TypeScript conventions and patterns specific to AFNM mod development. Activate when writing or reviewing TypeScript code, adding types or interfaces, or when about to use any or skip type safety.
+---
+
 # Skill: TypeScript for AFNM Mods
 
 TypeScript conventions and patterns specific to AFNM mod development.

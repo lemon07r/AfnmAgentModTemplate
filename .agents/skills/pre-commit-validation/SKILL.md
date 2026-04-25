@@ -1,3 +1,8 @@
+---
+name: pre-commit-validation
+description: Run verification commands before claiming work is complete. Activate before committing code changes, before claiming a task is done, or before creating a release to ensure type safety and build success.
+---
+
 # Skill: Pre-Commit Validation
 
 Run actual verification commands before claiming work is complete. Evidence before claims, always.

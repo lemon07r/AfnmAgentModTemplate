@@ -1,3 +1,8 @@
+---
+name: modapi-lookup
+description: Reference for AFNM ModAPI hooks, actions, and utilities. Activate when writing hook registrations, using content registration functions, accessing game data, or implementing registerOptionsUI, injectUI, or addScreen.
+---
+
 # Skill: ModAPI Lookup
 
 When working with AFNM ModAPI hooks, actions, or utilities, consult `docs/reference/MODAPI_QUICK_REFERENCE.md` before searching external sources or guessing signatures.
@@ -24,4 +29,4 @@ When working with AFNM ModAPI hooks, actions, or utilities, consult `docs/refere
   - **Observation hooks** (no return value): `onLocationEnter`, `onLootDrop`, `onAdvanceDay`, `onAdvanceMonth`
   - **Mutation hooks** (return value modifies gameplay): `onCalculateDamage`, `onBeforeCombat`, `onEventDropItem`, `onGenerateExploreEvents`, `onDeriveRecipeDifficulty`, `onCreateEnemyCombatEntity`
   - **Dangerous hooks**: `onReduxAction` runs inside the reducer — keep fast, deterministic, side-effect-free
-- Prefer the official API in order: snapshot → subscribe → hooks → injectUI → raw store → DOM scraping
+- Prefer the official API in order: snapshot -> subscribe -> hooks -> injectUI -> raw store -> DOM scraping

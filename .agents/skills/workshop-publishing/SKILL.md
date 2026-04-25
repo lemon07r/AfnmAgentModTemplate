@@ -1,3 +1,8 @@
+---
+name: workshop-publishing
+description: Upload mods to Steam Workshop and manage the release lifecycle. Activate when publishing or updating a mod on Steam Workshop, preparing a release, or setting up Workshop publishing for the first time.
+---
+
 # Skill: Workshop Publishing
 
 Upload mods to Steam Workshop and manage the release lifecycle.

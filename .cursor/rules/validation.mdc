@@ -4,7 +4,7 @@ globs:
 alwaysApply: false
 ---
 
-See `docs/skills/pre-commit-validation.md`.
+See `.agents/skills/pre-commit-validation/SKILL.md`.
 
 Before any commit: `bun run typecheck && bun run build`
 Before any release: `bun run release:validate`

@@ -1,3 +1,8 @@
+---
+name: systematic-debugging
+description: Four-phase debugging methodology for AFNM mods that prevents thrashing. Activate when build errors, typecheck failures, runtime errors occur, or when mod behavior does not match expectations after repeated fix attempts.
+---
+
 # Skill: Systematic Debugging
 
 Four-phase debugging methodology that prevents thrashing. No fixes without root cause understanding.

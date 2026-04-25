@@ -1,3 +1,8 @@
+---
+name: frontend-mod-ui
+description: Design guidance for building mod UIs that integrate with AFNM's visual style using GameDialog, GameButton, BackgroundImage, and other game-provided components. Activate when creating mod settings panels, custom screens, injected UI, or persistent overlays.
+---
+
 # Skill: Frontend Mod UI Design
 
 Design guidance for building mod UIs that integrate well with AFNM's visual style.

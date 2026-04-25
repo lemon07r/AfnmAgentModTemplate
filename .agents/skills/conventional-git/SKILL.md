@@ -1,3 +1,8 @@
+---
+name: conventional-git
+description: Standardized commit messages and branch naming for AFNM mod projects. Activate when creating commits, branches, or release tags to follow the project's conventional commit format.
+---
+
 # Skill: Conventional Git
 
 Standardized commit messages and branch naming for AFNM mods.

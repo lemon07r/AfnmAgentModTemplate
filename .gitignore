@@ -10,7 +10,8 @@ settings.json
 !.env.example
 .vera/
 .agent/
-.agents/
 .claude/
 .factory/
 .junie/
+# NOTE: .agents/ is NOT ignored — it is the cross-agent skills directory per agentskills.io
+# Project skills live in .agents/skills/{skill-name}/SKILL.md

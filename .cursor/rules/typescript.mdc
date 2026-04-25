@@ -6,7 +6,7 @@ globs:
 alwaysApply: false
 ---
 
-See `docs/skills/typescript-afnm.md`.
+See `.agents/skills/typescript-afnm/SKILL.md`.
 
 Key rules:
 - Strict mode is on. Never disable it.

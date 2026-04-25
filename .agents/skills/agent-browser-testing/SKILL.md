@@ -1,3 +1,8 @@
+---
+name: agent-browser-testing
+description: Use browser automation to test AFNM mods in the running Electron game client. Requires the agent-browser CLI. Activate for automated UI testing, screenshot capture, verifying overlay behavior across screen transitions, or capturing Workshop preview images.
+---
+
 # Skill: Agent Browser Game Testing
 
 Use browser automation to test AFNM mods in the running Electron game client. Requires `agent-browser` CLI to be installed.

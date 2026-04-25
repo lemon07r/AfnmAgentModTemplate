@@ -1,3 +1,8 @@
+---
+name: live-game-testing
+description: Safe workflow for testing mods in the actual AFNM game client without Steam relaunch loops. Activate when the runtime oracle is insufficient and you need visual or UI verification of mod behavior.
+---
+
 # Skill: Live Game Testing
 
 Safe workflow for testing mods in the actual game client without Steam relaunch loops.

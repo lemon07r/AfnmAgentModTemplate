@@ -88,6 +88,8 @@ Start in `src/modContent/index.ts` for gameplay logic and settings wiring.
   Low-noise implementation guidance for future coding agents.
 - `SUPPLEMENTARY_GUIDE.md`
   The deeper strategy guide: architecture choices, gotchas, testing discipline, and advanced patterns.
+- `.agents/skills/`
+  Workflow-specific skills following the [agentskills.io](https://agentskills.io/) standard. Auto-discovered by supporting agents (Roo Code, Cline, Claude Code). Each skill is a directory containing a `SKILL.md` with task-specific instructions.
 
 </details>
 
@@ -171,13 +173,14 @@ This template is designed to work with any AI coding agent.
 
 - **[Codex CLI](https://github.com/openai/codex)** — Also works with any OpenAI-compatible API. Reads `AGENTS.md`.
 - **[OpenCode](https://opencode.ai)** — Open-source terminal agent. Works with any provider. Reads `AGENTS.md`.
-- **[Cline](https://cline.bot)** — VS Code extension. Works with any provider. Reads `.clinerules`.
-- **[Claude Code](https://docs.anthropic.com/en/docs/claude-code)** — Anthropic's terminal agent. Reads `CLAUDE.md`.
+- **[Roo Code](https://roocode.com)** — Successor to Cline. VS Code extension that auto-discovers skills from `.agents/skills/` per the agentskills.io standard. Also reads `.clinerules`.
+- **[Cline](https://cline.bot)** — VS Code extension. Works with any provider. Reads `.clinerules` and `.agents/skills/`.
+- **[Claude Code](https://docs.anthropic.com/en/docs/claude-code)** — Anthropic's terminal agent. Reads `CLAUDE.md` and `.agents/skills/`.
 - **[Droid](https://docs.factory.ai)** — Factory's terminal agent. Works with any provider via BYOK.
 
 </details>
 
-This template includes context files for all of the above, so whichever tool you choose, it will find the project rules, ModAPI reference, and workflow skills automatically.
+This template includes context files for all of the above, so whichever tool you choose, it will find the project rules, ModAPI reference, and workflow skills automatically. Agents following the [agentskills.io](https://agentskills.io/) standard (Roo Code, Cline, Claude Code) additionally get on-demand skill activation from `.agents/skills/`.
 
 ## Docs To Read Next
 
@@ -185,5 +188,5 @@ This template includes context files for all of the above, so whichever tool you
 - [SUPPLEMENTARY_GUIDE.md](./SUPPLEMENTARY_GUIDE.md) — deep patterns from shipping real mods
 - [ModAPI Quick Reference](./docs/reference/MODAPI_QUICK_REFERENCE.md) — compact cheat sheet of every hook, action, and util
 - [AFNM Modding Reference](./docs/reference/AFNM_MODDING.md) — upstream sources, fallback ladder, game code patterns
-- [Skills](./docs/skills/) — workflow-specific skills (runtime oracle, debugging, validation, publishing, etc.)
+- [Skills](./.agents/skills/) — workflow-specific skills (runtime oracle, debugging, validation, publishing, etc.)
 - [AfnmExampleMod docs](https://lyeeedar.github.io/AfnmExampleMod/) — upstream API and content reference

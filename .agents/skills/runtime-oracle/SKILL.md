@@ -1,3 +1,8 @@
+---
+name: runtime-oracle
+description: Verify ModAPI surface, hook existence, and launcher behavior against the installed AFNM game runtime. Activate before using any ModAPI hook you have not verified, when docs and observed behavior disagree, or when checking if a game update changed the API.
+---
+
 # Skill: Runtime Oracle
 
 Use the installed-game runtime oracle to verify ModAPI surface, hook existence, and launcher behavior before making assumptions based on docs or types.

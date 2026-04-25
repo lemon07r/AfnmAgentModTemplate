@@ -8,7 +8,7 @@ This is an Ascend From Nine Mountains mod project using TypeScript, React, webpa
 - `SUPPLEMENTARY_GUIDE.md` — deep patterns and anti-patterns from shipping real mods
 - `docs/reference/MODAPI_QUICK_REFERENCE.md` — compact ModAPI cheat sheet
 - `docs/reference/AFNM_MODDING.md` — upstream sources, fallback ladder
-- `docs/skills/` — workflow-specific guidance
+- `.agents/skills/` — workflow-specific guidance
 
 ## Essential Rules
 
