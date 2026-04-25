@@ -149,38 +149,21 @@ Most tasks should use the installed-runtime oracle, not a live UI launch.
 
 ## Recommended AI Coding Agents
 
-This template is designed to work with any AI coding agent.
+This template includes context files for the tools below, so whichever you choose, it will find the project rules, ModAPI reference, and workflow skills automatically.
 
-### Free (quick picks)
-
-- **[Gemini CLI](https://github.com/google-gemini/gemini-cli)** — Google's open-source terminal agent. Free with a Google account. Reads `GEMINI.md` automatically.
-- **[Qwen Code](https://github.com/QwenLM/qwen-code)** — Qwen's open-source terminal coding agent. Reads `AGENTS.md` automatically.
-- **[Mistral CLI](https://github.com/mistralai/mistral-vibe)** — Mistral's open-source terminal coding agent. Reads `AGENTS.md` automatically.
-- **[Kiro](https://kiro.dev)** — Agentic coding IDE with a free tier.
-
-<details>
-<summary>More options: free tiers / generous plans</summary>
-
-- **[Google Antigravity](https://idx.google.com/antigravity)** — Google's agent-first IDE. Free tier with Gemini. Reads `GEMINI.md` and `AGENTS.md`.
-- **[Cursor](https://cursor.com)** — AI-native code editor with a free tier. Reads `.cursor/rules/` for scoped skills.
-- **[Windsurf](https://windsurf.com)** — AI code editor with a free tier. Reads `.windsurf/rules/`.
-- **[GitHub Copilot](https://github.com/features/copilot)** — Free for students, educators, and open-source maintainers. Reads `.github/copilot-instructions.md`.
-
-</details>
-
-<details>
-<summary>More options: bring your own API key</summary>
-
-- **[Codex CLI](https://github.com/openai/codex)** — Also works with any OpenAI-compatible API. Reads `AGENTS.md`.
-- **[OpenCode](https://opencode.ai)** — Open-source terminal agent. Works with any provider. Reads `AGENTS.md`.
+- **[Gemini CLI](https://github.com/google-gemini/gemini-cli)** — Reads `GEMINI.md`.
+- **[Qwen Code](https://github.com/QwenLM/qwen-code)** — Reads `AGENTS.md`.
+- **[Mistral CLI](https://github.com/mistralai/mistral-vibe)** — Reads `AGENTS.md`.
+- **[Kiro](https://kiro.dev)** — Agentic coding IDE.
+- **[Cursor](https://cursor.com)** — Reads `.cursor/rules/` for scoped rules.
+- **[Windsurf](https://windsurf.com)** — Reads `.windsurf/rules/`.
+- **[GitHub Copilot](https://github.com/features/copilot)** — Reads `.github/copilot-instructions.md`.
+- **[Codex CLI](https://github.com/openai/codex)** — Reads `AGENTS.md`.
+- **[OpenCode](https://opencode.ai)** — Reads `AGENTS.md`.
 - **[Roo Code](https://roocode.com)** — Successor to Cline. VS Code extension. Reads `.clinerules`.
-- **[Cline](https://cline.bot)** — VS Code extension. Works with any provider. Reads `.clinerules`.
-- **[Claude Code](https://docs.anthropic.com/en/docs/claude-code)** — Anthropic's terminal agent. Reads `CLAUDE.md`.
-- **[Droid](https://docs.factory.ai)** — Factory's terminal agent. Works with any provider via BYOK.
-
-</details>
-
-This template includes context files for all of the above, so whichever tool you choose, it will find the project rules, ModAPI reference, and workflow skills automatically.
+- **[Cline](https://cline.bot)** — VS Code extension. Reads `.clinerules`.
+- **[Claude Code](https://docs.anthropic.com/en/docs/claude-code)** — Reads `CLAUDE.md`.
+- **[Droid](https://docs.factory.ai)** — Factory's terminal agent.
 
 ## Docs To Read Next
 
