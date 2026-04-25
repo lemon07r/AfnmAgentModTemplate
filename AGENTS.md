@@ -10,6 +10,10 @@ This template is the default starting point for new *Ascend From Nine Mountains*
 4. `docs/reference/AFNM_MODDING.md` — practical reference: upstream sources, fallback ladder, game code patterns
 5. `.agents/skills/` — workflow-specific skills (runtime oracle, debugging, validation, publishing, etc.)
 
+## Documentation And Skill Stewardship
+
+If you discover inaccurate, stale, duplicated, or misleading information in any doc or `.agents/skills/*` file while working, fix it in the same change. Agents have standing permission to edit, correct, prune, or improve docs and skills so future agents do not inherit known traps. Verify corrections against code, tests, package scripts, or the installed-runtime oracle; if something cannot be fully verified, make the uncertainty explicit instead of presenting it as fact. Keep updates concise and run the relevant docs/validation checks after changing docs or skills.
+
 ## Project Layout
 
 - `src/modContent/index.ts` is the real runtime entrypoint.

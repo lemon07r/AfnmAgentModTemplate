@@ -76,6 +76,10 @@ Never skip tiers. If tier 1-3 can do the job, do not reach for tier 4-5. Always 
 | Commit messages, branch naming, tags | `conventional-git` |
 | Exploratory QA / bug hunting for web apps | `dogfood` |
 
+## Documentation And Skill Stewardship
+
+Docs and skills are editable working assets. If this skill, another skill, or any project doc is wrong, stale, duplicated, or unclear, correct it as soon as you notice it instead of deferring it to a later agent. Verify against the installed runtime, code, tests, or package scripts; keep skill bodies concise and move long details to references when needed.
+
 ## Gotchas
 
 1. **`onReduxAction` runs inside the reducer.** Side effects, async calls, or state mutations in this hook will corrupt game state or cause desyncs. Use it only for read-only observation; dispatch actions from a `setTimeout` or `subscribe` callback instead.
