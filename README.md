@@ -157,13 +157,13 @@ This template includes context files for the tools below, so whichever you choos
 - **[Qwen Code](https://github.com/QwenLM/qwen-code)** — Reads `AGENTS.md`.
 - **[Mistral CLI](https://github.com/mistralai/mistral-vibe)** — Reads `AGENTS.md`.
 - **[Kiro](https://kiro.dev)** — Agentic coding IDE.
-- **[Cursor](https://cursor.com)** — Reads `.cursor/rules/` for scoped rules.
-- **[Windsurf](https://windsurf.com)** — Reads `.windsurf/rules/`.
+- **[Cursor](https://cursor.com)** — Reads 
+- **[Windsurf](https://windsurf.com)** — Reads 
 - **[GitHub Copilot](https://github.com/features/copilot)** — Reads `.github/copilot-instructions.md`.
 - **[Codex CLI](https://github.com/openai/codex)** — Reads `AGENTS.md`.
 - **[OpenCode](https://opencode.ai)** — Reads `AGENTS.md`.
-- **[Roo Code](https://roocode.com)** — Successor to Cline. VS Code extension. Reads `.clinerules`.
-- **[Cline](https://cline.bot)** — VS Code extension. Reads `.clinerules`.
+- **[Roo Code](https://roocode.com)** — Successor to Cline. VS Code extension. 
+- **[Cline](https://cline.bot)** — VS Code extension.
 - **[Claude Code](https://docs.anthropic.com/en/docs/claude-code)** — Reads `CLAUDE.md`.
 - **[Droid](https://docs.factory.ai)** — Factory's terminal agent.
 
