@@ -143,6 +143,22 @@ function extractSummary(extractDir, gameDir, asarPath) {
       hasOnAdvanceMonth: hasToken(gameJs, 'onAdvanceMonth'),
       hasOnBeforeCombat: hasToken(gameJs, 'onBeforeCombat'),
       hasOnReduxAction: hasToken(gameJs, 'onReduxAction'),
+      hasOnReduxActionPayload: hasToken(gameJs, 'onReduxActionPayload'),
+      hasAddToSectShop: hasToken(gameJs, 'addToSectShop'),
+      hasMakeSave: hasToken(gameJs, 'makeSave'),
+      hasLoadSave: hasToken(gameJs, 'loadSave'),
+      hasListSaves: hasToken(gameJs, 'listSaves'),
+      hasSaveManagementActions:
+        hasToken(gameJs, 'makeSave') &&
+        hasToken(gameJs, 'loadSave') &&
+        hasToken(gameJs, 'listSaves'),
+      hasBeforeTechniqueEffects: hasToken(gameJs, 'beforeTechniqueEffects'),
+      hasAfterTechniqueEffects: hasToken(gameJs, 'afterTechniqueEffects'),
+      hasOnStackGainEffects: hasToken(gameJs, 'onStackGainEffects'),
+      hasNewBuffTimingFields:
+        hasToken(gameJs, 'beforeTechniqueEffects') &&
+        hasToken(gameJs, 'afterTechniqueEffects') &&
+        hasToken(gameJs, 'onStackGainEffects'),
     },
   };
 }

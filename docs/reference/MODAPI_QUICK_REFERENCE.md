@@ -23,6 +23,17 @@ All methods are on `window.modAPI` unless noted otherwise.
 | `injectUI(slotId, generator)` | `(string, InjectGenerator) => void` | Inject React content into a named game dialog/screen slot |
 | `addScreen(config)` | `({ key, component, music?, ambience? }) => void` | Register a full mod screen |
 
+## Screen/Options API Actions
+
+These methods are available from the `api.actions` object passed to mod screens,
+options panels, and injected UI generators.
+
+| Method | Notes |
+|--------|-------|
+| `setModData(modName, key, data)` | Store save-scoped JSON-serializable mod data |
+| `executeCraftingTechnique(technique)` | Execute a resolved crafting technique during an active crafting session |
+| `previewCraftingTechnique(technique, state)` | Preview crafting technique results without dispatching Redux actions |
+
 ## Lifecycle Hooks — Observation (no return value)
 
 | Hook | Parameters |
@@ -58,7 +69,22 @@ All methods are on `window.modAPI` unless noted otherwise.
 
 | Hook | Parameters | Returns | Warning |
 |------|-----------|---------|---------|
-| `hooks.onReduxAction` | `(actionType, stateBefore, stateAfter)` | `RootState` | Runs inside the reducer. Keep fast, deterministic, no side-effects. Prefer `subscribe()` when possible. |
+| `hooks.onReduxAction` | `(actionType, stateBefore, stateAfter, payload)` | `RootState` | Runs inside the reducer after action payload interception. Keep fast, deterministic, no side-effects. Prefer `subscribe()` when possible. |
+| `hooks.onReduxActionPayload` | `(actionType, payload)` | `unknown \| null` | Runs before the reducer. Return a replacement payload, or `null` to drop the action. Keep fast, deterministic, no side-effects. |
+
+## Combat Buff Timing
+
+AFNM `0.6.52` replaced the legacy `onTechniqueEffects` + `afterTechnique`
+pattern for new combat buffs. Prefer these fields when authoring buff data:
+
+```
+beforeTechniqueEffects
+afterTechniqueEffects
+onStackGainEffects
+onRoundEffects
+onRoundStartEffects
+onCombatStartEffects
+```
 
 ## Content Registration — Items
 
@@ -66,6 +92,7 @@ All methods are on `window.modAPI` unless noted otherwise.
 actions.addItem(item)
 actions.addItemToShop(item, stacks, location, realm, valueModifier?, reputation?)
 actions.addItemToGuild(item, stacks, guild, rank, valueModifier?, reputation?)
+actions.addToSectShop(item, stacks, realm, valueModifier?, reputation?)
 actions.addItemToAuction(item, chance, condition, countOverride?, countMultiplier?)
 actions.addItemToFallenStar(item, realm)
 ```
@@ -182,6 +209,7 @@ utils.getCraftingEquipmentStats(realm, progress, factors, type)
 utils.getClothingDefense(realm, scale)
 utils.getClothingCharisma(realm, mult)
 utils.getBreakthroughCharisma(realm, mult)
+utils.calculateDamage(attackPower, defenderDefense, defenderDr, defenderDefenseFactor, maxReduction, defenderVulnerability, realm, realmProgress, defenderProtection, cultivatorResistance)
 ```
 
 ## Utility Functions — Quest Templates
@@ -209,7 +237,26 @@ utils.buf(buff)            // Pink — buff names
 utils.itm(item)            // Pink — item names
 utils.char(text)           // Green — character names
 utils.elem(element)        // Styled technique element
+utils.t(value, variables?, context?) // Translate immediately
+utils.tPlural(count, one, other, variables?) // Translate pluralized copy
+utils.tr(key, variables?, context?) // Deferred translation object for data definitions
 ```
+
+## Utility Functions — Save Management
+
+Added in `0.6.52-v2`. These are on `window.modAPI.utils`, so they can be called
+from any mod context (no UI screen required).
+
+```
+utils.makeSave(filename)   // Create a character-scoped backup save file
+utils.loadSave(filename)   // Load a character-scoped backup save file
+utils.listSaves()          // List backup saves for the current character
+```
+
+Note: `listSaves()` returns `Promise<SaveFileInfo[]>` but `afnm-types@0.6.52-v2`
+imports `SaveFileInfo` from a `./electron` module that is not shipped in the
+package. Infer the return type from `ReturnType<typeof modAPI.utils.listSaves>`
+until upstream exports it.
 
 ## Utility Functions — Other
 

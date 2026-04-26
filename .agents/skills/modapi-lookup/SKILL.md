@@ -28,5 +28,5 @@ When working with AFNM ModAPI hooks, actions, or utilities, consult `docs/refere
 - Understand the hook classification before using it:
   - **Observation hooks** (no return value): `onLocationEnter`, `onLootDrop`, `onAdvanceDay`, `onAdvanceMonth`
   - **Mutation hooks** (return value modifies gameplay): `onCalculateDamage`, `onBeforeCombat`, `onEventDropItem`, `onGenerateExploreEvents`, `onDeriveRecipeDifficulty`, `onCreateEnemyCombatEntity`
-  - **Dangerous hooks**: `onReduxAction` runs inside the reducer — keep fast, deterministic, side-effect-free
+  - **Dangerous hooks**: `onReduxAction` and `onReduxActionPayload` run inside the reducer path — keep fast, deterministic, side-effect-free
 - Prefer the official API in order: snapshot -> subscribe -> hooks -> injectUI -> raw store -> DOM scraping

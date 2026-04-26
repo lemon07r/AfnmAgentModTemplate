@@ -30,7 +30,7 @@ Before writing any fix:
 
 - Is this a known AFNM gotcha? Check `SUPPLEMENTARY_GUIDE.md` section 3 (Runtime Truths) and section 7 (Anti-Patterns)
 - Is the hook timing wrong? (`onGenerateExploreEvents` fires before weight expansion)
-- Is `onReduxAction` causing side effects? (It runs inside the reducer)
+- Are `onReduxAction` or `onReduxActionPayload` causing side effects? (They run inside the reducer path)
 - Are you missing optional chaining on `window.modAPI?.hooks?.*`?
 - Is the mod being double-initialized? (Check for installation guard)
 

@@ -8,7 +8,7 @@ It distills the patterns learned while shipping:
 - `Lucky All Around`
 - `ElderGPT Spirit Ring`
 
-Unless noted otherwise, the runtime statements below were rechecked against the installed AFNM runtime `0.6.50-c2637ae` on `2026-04-11`.
+Unless noted otherwise, the runtime statements below were rechecked against `afnm-types@0.6.52-v2` and confirmed by the upstream developer on `2026-04-26`.
 
 ## 1. Pick The Right Mod Shape First
 
@@ -21,7 +21,7 @@ The most common mod type. You add new items, characters, locations, quests, even
 Default stack:
 
 - `actions.addItem()`, `actions.addLocation()`, `actions.addQuest()`, etc.
-- `actions.addItemToShop()`, `actions.linkLocations()`, `actions.addEventsToLocation()` for integration
+- `actions.addItemToShop()`, `actions.addToSectShop()`, `actions.linkLocations()`, `actions.addEventsToLocation()` for integration
 - asset imports for icons and backgrounds
 - event step definitions for narrative
 
@@ -151,19 +151,32 @@ That matters because repeat-penalty bookkeeping is keyed by the expanded weighte
 
 If you duplicate events inside the hook, you change repeat semantics. Lucky All Around therefore uses the hook only to arm a narrowly scoped weighted-slot patch.
 
-### `onReduxAction` is powerful and dangerous
+### `onReduxAction` and `onReduxActionPayload` are powerful and dangerous
 
-It runs inside the reducer.
+They run inside the reducer path.
 
 That means:
 
-- keep it fast
-- keep it deterministic
+- keep them fast
+- keep them deterministic
 - avoid side effects
 - avoid network requests
 - avoid UI work
 
-If `subscribe()` can solve the problem, prefer that.
+Use `onReduxActionPayload` only when you need to modify or drop an action before the reducer sees it. Use `onReduxAction` only when you need post-reducer state interception. If `subscribe()` can solve the problem, prefer that.
+
+### Combat buff timing changed in 0.6.52
+
+New combat buffs should use the explicit timing fields:
+
+- `beforeTechniqueEffects`
+- `afterTechniqueEffects`
+- `onStackGainEffects`
+- `onRoundEffects`
+- `onRoundStartEffects`
+- `onCombatStartEffects`
+
+Do not author new buffs with the legacy `onTechniqueEffects` + `afterTechnique` shape. Those fields are no longer read as of 0.6.52. All six timing fields listed above are confirmed implemented in the 0.6.52 runtime and typed in `afnm-types@0.6.52-v2`.
 
 ### Networking is no longer the blocker
 

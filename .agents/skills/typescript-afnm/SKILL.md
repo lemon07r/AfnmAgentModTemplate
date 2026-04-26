@@ -78,6 +78,20 @@ import type { ModAPI, ModOptionsFC, RootState, CombatEntity } from 'afnm-types';
 import { GAME_VERSION } from 'afnm-types';
 ```
 
+For newly-added APIs whose helper types are not exported directly, infer from the
+available method instead of importing private package paths:
+
+```typescript
+import type { ModReduxAPI } from 'afnm-types';
+
+type ListedSave = Awaited<
+  ReturnType<ModReduxAPI['actions']['listSaves']>
+>[number];
+```
+
+Keep this kind of helper local and small, and verify the method exists with
+`bun run runtime:grep -- "<method-name>"` before building UI around it.
+
 ## Rules
 
 - Never use `any`. Use `unknown` and narrow with type guards.

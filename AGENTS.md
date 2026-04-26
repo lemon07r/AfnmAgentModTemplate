@@ -57,7 +57,7 @@ If you discover inaccurate, stale, duplicated, or misleading information in any 
   3. `window.modAPI.injectUI()` / `registerOptionsUI()`
   4. raw store or DOM/fiber fallback only for verified gaps
 - Store mod settings in numeric global flags unless the data truly belongs to a save file.
-- Treat `window.modAPI.hooks.onReduxAction(...)` as high-risk. It runs inside the reducer.
+- Treat `window.modAPI.hooks.onReduxAction(...)` and `onReduxActionPayload(...)` as high-risk. They run inside the reducer path.
 - Treat `window.modAPI.hooks.onGenerateExploreEvents(...)` as pre-weight-expansion. It is not a direct “set final odds” hook.
 - Use `fetch()` normally on `0.6.50+`, but keep failures non-fatal.
 - Keep game-shape assumptions centralized instead of scattering them across UI and logic modules.

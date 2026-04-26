@@ -104,7 +104,7 @@ Use live testing only when the oracle is insufficient (e.g., UI smoke tests, vis
 4. For DevTools access: launch with `--remote-debugging-port=9222`, then open `chrome://inspect` in Chrome
 5. **Delete `disable_steam` when done** — leaving it behind blocks Workshop mod loading
 
-## Known API Gaps (as of 0.6.50)
+## Known API Gaps (as of 0.6.52)
 
 These game behaviors have no official ModAPI interception point:
 
@@ -112,7 +112,7 @@ These game behaviors have no official ModAPI interception point:
 |-----|-----------|
 | World map event `triggerChance` | Use `addMapEventsToLocation` or `addEventsToLocation` instead |
 | Auto-battle state | Not in `getGameStateSnapshot()`; DOM inspection is the only fallback |
-| Crafting action dispatch | No public API to dispatch native crafting Redux actions |
+| Crafting action dispatch outside an active crafting screen | Inside screens/options use `api.actions.executeCraftingTechnique()` and `api.actions.previewCraftingTechnique()`; outside that context there is no standalone root ModAPI action |
 | Post-weight-expansion explore events | `onGenerateExploreEvents` fires before expansion; see SUPPLEMENTARY_GUIDE.md §3 |
 
 When you discover a new gap, consider filing a request with the game developer rather than building fragile workarounds.
@@ -125,4 +125,8 @@ When you discover a new gap, consider filing a request with the game developer r
 - React, ReactDOM, MUI, and MUI Icons are provided by the game runtime — externalize them in webpack, do not bundle them
 - The game runtime exposes `window.React` — use it for `createElement` calls when JSX is not available
 - `registerOptionsUI` components receive `{ api }` with `api.components.GameButton` and `api.actions`
-- `onReduxAction` runs inside the Redux reducer — keep it fast, deterministic, side-effect-free
+- `afnm-types@0.6.52-v2` exposes `utils.makeSave()`, `utils.loadSave()`, and `utils.listSaves()` for character-scoped backup saves directly on `window.modAPI.utils` (previously these were on `ModReduxAPI` and required a UI screen context)
+- `actions.addToSectShop()` adds items directly to the Nine Mountain Sect Favour Exchange shop
+- `onReduxAction` and `onReduxActionPayload` run inside the reducer path — keep them fast, deterministic, side-effect-free
+- New combat buffs should use `beforeTechniqueEffects`, `afterTechniqueEffects`, and `onStackGainEffects`; legacy `onTechniqueEffects` and `afterTechnique` are no longer read as of 0.6.52
+- `afnm-types@0.6.52-v2` references a `SaveFileInfo` return type for `listSaves()` but does not ship/export `dist/electron.d.ts`; infer the return type from `ReturnType<typeof modAPI.utils.listSaves>` until upstream exports it

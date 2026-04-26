@@ -82,7 +82,7 @@ Docs and skills are editable working assets. If this skill, another skill, or an
 
 ## Gotchas
 
-1. **`onReduxAction` runs inside the reducer.** Side effects, async calls, or state mutations in this hook will corrupt game state or cause desyncs. Use it only for read-only observation; dispatch actions from a `setTimeout` or `subscribe` callback instead.
+1. **`onReduxAction` and `onReduxActionPayload` run inside the reducer path.** Side effects, async calls, or broad state mutation in these hooks can corrupt game state or cause desyncs. Use them only for narrow, deterministic interception; prefer `subscribe()` for observation.
 
 2. **`onGenerateExploreEvents` is pre-weight-expansion.** It fires before the game expands weighted pools into the final event list. Modifying odds here does not directly set final probabilities — it adjusts inputs to the expansion algorithm.
 
