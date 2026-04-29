@@ -153,29 +153,11 @@ Most tasks should use the installed-runtime oracle, not a live UI launch.
 
 </details>
 
-## Recommended AI Coding Agents
+## Compatible AI Coding Agents
 
-This template includes context files for the tools below, so whichever you choose, it will find the project rules, ModAPI reference, and workflow skills automatically. All agent context files (`CLAUDE.md`, `GEMINI.md`, `.clinerules`, `.github/copilot-instructions.md`, `.windsurf/rules/afnm-modding.md`) are symlinks to `AGENTS.md` to prevent drift.
+Agent context files (`CLAUDE.md`, `GEMINI.md`, `.clinerules`, `.github/copilot-instructions.md`, `.windsurf/rules/afnm-modding.md`) are symlinks to `AGENTS.md` — any agent that reads one of these will pick up the project rules and skills automatically.
 
-- **[Amp](https://ampcode.com)** — Sourcegraph's terminal coding agent.
-- **[Charm Crush](https://github.com/charmbracelet/crush)** — Glamorous agentic coding TUI from Charm.
-- **[Claude Code](https://docs.anthropic.com/en/docs/claude-code)** — Reads `CLAUDE.md`.
-- **[Cline](https://cline.bot)** — VS Code extension.
-- **[Codex CLI](https://github.com/openai/codex)** — Reads `AGENTS.md`.
-- **[Cursor](https://cursor.com)** — Agentic IDE with rules support.
-- **[Droid](https://docs.factory.ai)** — Factory's terminal agent.
-- **[Gemini CLI](https://github.com/google-gemini/gemini-cli)** — Reads `GEMINI.md`.
-- **[GitHub Copilot](https://github.com/features/copilot)** — Reads `.github/copilot-instructions.md`.
-- **[Goose](https://goose-docs.ai)** — Open source AI agent from the Agentic AI Foundation (Linux Foundation).
-- **[JetBrains Junie](https://www.jetbrains.com/junie/)** — AI coding agent for JetBrains IDEs.
-- **[Kilo Code](https://kilocode.ai)** — Open source AI coding agent (VS Code, JetBrains, CLI).
-- **[Kimi Code](https://www.kimi.com/code)** — Moonshot AI's coding agent.
-- **[Kiro](https://kiro.dev)** — Agentic coding IDE.
-- **[Mistral CLI](https://github.com/mistralai/mistral-vibe)** — Reads `AGENTS.md`.
-- **[OpenCode](https://opencode.ai)** — Reads `AGENTS.md`.
-- **[Qwen Code](https://github.com/QwenLM/qwen-code)** — Reads `AGENTS.md`.
-- **[Roo Code](https://roocode.com)** — Successor to Cline. VS Code extension.
-- **[Windsurf](https://windsurf.com)** — Agentic IDE with rules support.
+[Amp](https://ampcode.com) · [Charm Crush](https://github.com/charmbracelet/crush) · [Claude Code](https://docs.anthropic.com/en/docs/claude-code) · [Cline](https://cline.bot) · [Codex CLI](https://github.com/openai/codex) · [Cursor](https://cursor.com) · [Droid](https://docs.factory.ai) · [Gemini CLI](https://github.com/google-gemini/gemini-cli) · [GitHub Copilot](https://github.com/features/copilot) · [Goose](https://goose-docs.ai) · [JetBrains Junie](https://www.jetbrains.com/junie/) · [Kilo Code](https://kilocode.ai) · [Kiro](https://kiro.dev) · [OpenCode](https://opencode.ai) · [Qwen Code](https://github.com/QwenLM/qwen-code) · [Windsurf](https://windsurf.com)
 
 ## Docs To Read Next
 

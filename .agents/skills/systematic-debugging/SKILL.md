@@ -28,10 +28,9 @@ Before writing any fix:
 
 ### Phase 2: Pattern Analysis
 
-- Is this a known AFNM gotcha? Check `SUPPLEMENTARY_GUIDE.md` section 3 (Runtime Truths) and section 7 (Anti-Patterns)
-- Is the hook timing wrong? (`onGenerateExploreEvents` fires before weight expansion)
-- Are `onReduxAction` or `onReduxActionPayload` causing side effects? (They run inside the reducer path)
-- Are you missing optional chaining on `window.modAPI?.hooks?.*`?
+- Is this a known AFNM gotcha? Check `SUPPLEMENTARY_GUIDE.md` §3 (Runtime Truths) and §6 (Anti-Patterns)
+- Is the hook being used at the wrong timing? (See `MODAPI_QUICK_REFERENCE.md` for hook classifications)
+- Missing optional chaining on `window.modAPI?.hooks?.*`?
 - Is the mod being double-initialized? (Check for installation guard)
 
 ### Phase 3: Hypothesis Testing
@@ -48,9 +47,9 @@ Before writing any fix:
 - Add optional chaining if missing
 - Update the debug API to expose the state that would have helped diagnose this
 
-## Rules
+## Guidelines
 
-- **Stop after 3 failed fix attempts.** Re-examine your assumptions. Use the runtime oracle to verify the API surface.
-- **Never fix without understanding.** If you can't explain why the fix works, it's a band-aid.
+- **After several failed attempts, step back.** Re-examine your assumptions. Use the runtime oracle to verify the API surface.
+- **Avoid fixing without understanding.** If you can't explain why the fix works, it's likely a band-aid.
 - **Prefer the oracle over guessing.** `bun run runtime:grep -- "<pattern>"` answers most "does this exist?" questions instantly.
 - **Check SUPPLEMENTARY_GUIDE.md first.** Many debugging questions are already answered there.

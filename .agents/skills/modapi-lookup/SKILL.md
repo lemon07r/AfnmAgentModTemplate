@@ -22,15 +22,11 @@ When working with AFNM ModAPI hooks, actions, or utilities, consult `docs/refere
 3. If the method isn't documented, use `bun run runtime:grep -- "<method-name>"` to verify it exists in the shipped runtime
 4. For full upstream documentation, see https://lyeeedar.github.io/AfnmExampleMod/
 
-## Rules
+## Guidelines
 
-- Always use optional chaining when calling ModAPI methods: `window.modAPI?.hooks?.onLocationEnter?.()`
-- Understand the hook classification before using it:
-  - **Observation hooks** (no return value): `onLocationEnter`, `onLootDrop`, `onAdvanceDay`, `onAdvanceMonth`
-  - **Mutation hooks** (return value modifies gameplay): `onCreatePlayerCombatEntity`, `onCreatePlayerCraftingEntity`, `onCreateEnemyCombatEntity`, `onCalculateDamage`, `onBeforeCombat`, `onBeforeCraft`, `onDeriveRecipeDifficulty`, `onEventDropItem`, `onGenerateExploreEvents`
-  - **Completion hooks** (return additional `EventStep[]`): `onCompleteCombat`, `onCompleteTournament`, `onCompleteDualCultivation`, `onCompleteCrafting`, `onCompleteAuction`, `onCompleteStoneCutting`
-  - **Dangerous hooks**: `onReduxAction` and `onReduxActionPayload` run inside the reducer path — keep fast, deterministic, side-effect-free
+- Use optional chaining when calling ModAPI methods (see `typescript-afnm` skill for patterns)
+- Understand the hook classification before using it — see `MODAPI_QUICK_REFERENCE.md` for the full table (observation, mutation, completion, dangerous)
 - For keybinding registration, use `actions.registerKeybinding()` — custom action names need a cast: `'myMod.action' as KeybindingAction`
-- For toast notifications, use `utils.showToast()` — on `window.modAPI.utils`, not the screen API
-- Tooltip utilities (`parseTooltipLine`, `expandTooltipTemplate`, `expandTooltipTags`) and components (`GameTooltip`, `GameTooltipBox`, `TooltipLine`) are on `ModReduxAPI` — available in screen, options, and injectUI contexts only
-- Prefer the official API in order: snapshot -> subscribe -> hooks -> injectUI -> raw store -> DOM scraping
+- Toast notifications are on `window.modAPI.utils.showToast()`, not the screen API
+- Tooltip utilities and components are on `ModReduxAPI` — available in screen, options, and injectUI contexts only
+- Prefer the official API fallback order from `AGENTS.md` § Modding Rules

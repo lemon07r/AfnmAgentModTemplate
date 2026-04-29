@@ -119,25 +119,28 @@ When you discover a new gap, consider filing a request with the game developer r
 
 ## Key Runtime Facts
 
+For method signatures and hook parameters, see `MODAPI_QUICK_REFERENCE.md`. For hook timing details and pitfalls, see `SUPPLEMENTARY_GUIDE.md` §3.
+
+### State & Data
+
 - `CraftingTechnique.name` is a stable, non-localized identifier (not a display name)
 - Global flags are numeric only — store booleans as `0` / `1`
 - `fetch()` works normally on `0.6.50+` — no special CSP workarounds needed
-- React, ReactDOM, MUI, and MUI Icons are provided by the game runtime — externalize them in webpack, do not bundle them
+
+### UI & Components
+
+- React, ReactDOM, MUI, and MUI Icons are provided by the game runtime — externalize them in webpack (see `typescript-afnm` skill)
 - The game runtime exposes `window.React` — use it for `createElement` calls when JSX is not available
 - `registerOptionsUI` components receive `{ api }` with `api.components.GameButton` and `api.actions`
-- `utils.makeSave()`, `utils.loadSave()`, and `utils.listSaves()` are on `window.modAPI.utils` for character-scoped backup saves (no UI screen context required)
+- Tooltip utilities and components are on `ModReduxAPI` — available in screen, options, and injectUI contexts only
+- `injectUI` supports screen-specific sub-slots (see `MODAPI_QUICK_REFERENCE.md` § injectUI Slot Names)
+
+### Hooks & Actions
+
+- `onCreatePlayerCombatEntity` and `onCreatePlayerCraftingEntity` modify the player entity after creation, before the session begins
+- `onBeforeCraft` modifies recipe, recipe stats, or player crafting entity before crafting begins
+- `onDeriveRecipeDifficulty` always includes `control` and `intensity` in the gameFlags parameter
+- Combat buffs: use `beforeTechniqueEffects`, `afterTechniqueEffects`, `onStackGainEffects`; legacy `onTechniqueEffects` + `afterTechnique` are no longer read as of 0.6.52
+- `registerKeybinding` registers custom keyboard shortcuts (Controls > Mods); `useKeybinding` responds to them in screen contexts
+- `utils.makeSave()`, `utils.loadSave()`, and `utils.listSaves()` are on `window.modAPI.utils` (no screen context required)
 - `actions.addToSectShop()` adds items directly to the Nine Mountain Sect Favour Exchange shop
-- `onReduxAction` and `onReduxActionPayload` run inside the reducer path — keep them fast, deterministic, side-effect-free
-- New combat buffs should use `beforeTechniqueEffects`, `afterTechniqueEffects`, and `onStackGainEffects`; legacy `onTechniqueEffects` and `afterTechnique` are no longer read as of 0.6.52
-
-### New in 0.6.53
-
-- **Player entity hooks:** `onCreatePlayerCombatEntity` and `onCreatePlayerCraftingEntity` allow modifying the player's combat or crafting entity after creation, before the session begins
-- **`onBeforeCraft`:** Modify recipe, recipe stats, or player crafting entity before crafting begins
-- **`onDeriveRecipeDifficulty` fix:** Now always includes `control` and `intensity` in the gameFlags parameter
-- **`registerKeybinding`:** Register custom keyboard shortcuts in `actions`; appears in Controls > Mods section. `KeybindingDefinition.action` is typed as the `KeybindingAction` union — custom mod actions need a cast: `'myMod.action' as KeybindingAction`
-- **Toast notifications:** `utils.showToast(message, timeout?, style?, customStyle?)` displays toast messages with `'info'`, `'success'`, `'warning'`, or `'error'` styles
-- **Tooltip components and utilities:** `GameTooltip`, `GameTooltipBox`, `TooltipLine` components plus `parseTooltipLine()`, `expandTooltipTemplate()`, `expandTooltipTags()` utilities — available on `ModReduxAPI` (screen/options/injectUI contexts)
-- **New `injectUI` sub-slots:** Screen-specific injection points like `'combat-topBarPlayerInfo'`, `'crafting-craftingScreen'`, `'stoneCutting-jadeCuttingScreen'`
-- **`useKeybinding` hook:** Available on `ModReduxAPI` for responding to keyboard shortcuts in screen/UI contexts
-- **Extraction utility:** `afnm-extract-translations` now supports an ignore patterns flag and produces cleaner `template.json` output

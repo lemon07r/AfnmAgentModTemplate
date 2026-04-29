@@ -12,7 +12,7 @@ Unless noted otherwise, the runtime statements below were rechecked against `afn
 
 ## 1. Pick The Right Mod Shape First
 
-Do not start with code. Start with the mod category. This determines which parts of the ModAPI you lean on and how to structure the project.
+Start with the mod category, not code. This determines which parts of the ModAPI you lean on and how to structure the project. For method signatures referenced below, see `docs/reference/MODAPI_QUICK_REFERENCE.md`.
 
 ### Content addition
 
@@ -132,20 +132,12 @@ If your mod doesn’t fit any single shape, start with whichever shape covers yo
 
 ## 2. ModAPI-First Means More Than “Use The API When Convenient”
 
-Use this order deliberately:
+Follow the fallback ladder in `AGENTS.md` § Modding Rules deliberately. Practical consequences:
 
-1. `window.modAPI.getGameStateSnapshot()`
-2. `window.modAPI.subscribe()`
-3. `window.modAPI.actions.registerOptionsUI(...)`
-4. `window.modAPI.injectUI(...)`
-5. raw store, DOM, or fiber fallback only for verified gaps
-
-Practical consequences:
-
-- do not poll with `setInterval` if `subscribe()` is enough
-- do not scrape English UI copy if the snapshot already contains the state
-- do not mutate `window.gameStore`
-- do not reach for a body-mounted overlay if a small injected affordance solves the problem
+- Avoid polling with `setInterval` when `subscribe()` suffices
+- Avoid scraping English UI copy when the snapshot already contains the state
+- Avoid mutating `window.gameStore`
+- Avoid reaching for a body-mounted overlay when a small injected affordance solves the problem
 
 ## 3. Important Runtime Truths
 
@@ -250,38 +242,7 @@ Harmony-specific notes:
 - Inscribed Patterns has a catastrophic stack-halving penalty on invalid-color actions.
 - Spiritual Resonance can retarget after a repeated new-color streak; the state machine is not just “current color plus progress”.
 
-## 6. Validation Discipline
-
-Default validation should be:
-
-1. `bun run typecheck`
-2. `bun run build`
-3. `bun run runtime:oracle`
-4. targeted `bun run runtime:grep -- "<pattern>"`
-
-Why this matters:
-
-- docs drift
-- patch notes drift
-- older notes drift
-- live executable behavior is the authority
-
-Use direct client launch only when you need true UI proof.
-
-When doing that:
-
-1. place the built zip in the installed `mods/` directory
-2. create `disable_steam` beside the executable
-3. launch with the platform's direct executable or native launcher
-4. remove `disable_steam` when finished
-
-Current installed-runtime check also confirms:
-
-- `supportsDisableSteamSentinel: true`
-- `restartsThroughSteamByDefault: true`
-- `writesRelativeSettingsJson: false`
-
-## 7. Anti-Patterns To Avoid
+## 6. Anti-Patterns To Avoid
 
 - broad global monkeypatches when a narrow scoped patch will do
 - DOM click listeners for behavior that already has a ModAPI hook
@@ -290,19 +251,7 @@ Current installed-runtime check also confirms:
 - shipping a template that cannot build as cloned
 - telling future agents to use a toolchain that the repo does not actually use
 
-## 8. Release Order
-
-The reliable order is:
-
-1. finish code and docs
-2. validate locally
-3. build the zip
-4. upload to Workshop locally
-5. only then push/tag any release automation path you keep in git
-
-If the upload path depends on the sibling `ModUploader-AFNM` repo, document that early instead of letting it surprise the next agent.
-
-## 9. Translation Support
+## 7. Translation Support
 
 AFNM supports mod translations via JSON files in a `translations/` directory inside the mod zip.
 
@@ -312,43 +261,13 @@ AFNM supports mod translations via JSON files in a `translations/` directory ins
 - Use the `modAPI.utils` text formatting helpers (`loc()`, `itm()`, `char()`, etc.) for styled text — these work with the game's localization system
 - For simple mods, a `template.json` showing the key format is enough to get started
 
-## 10. CI/CD With GitHub Actions
-
-The template includes `.github/workflows/release.yml` which:
-
-1. Triggers on `v*` tag pushes
-2. Installs bun and dependencies
-3. Builds the mod
-4. Creates a GitHub Release with the zip artifact
-
-Workflow:
-
-```bash
-# After Workshop upload and commit to main:
-git tag v1.0.0
-git push origin v1.0.0
-# GitHub Actions creates the Release automatically
-```
-
-## 11. Hook Limitations and Missing Coverage
-
-See `docs/reference/AFNM_MODDING.md` § "Known API Gaps" for the canonical table. Key points:
-
-- No interception hook for world map event `triggerChance` — use `addMapEventsToLocation` or `addEventsToLocation`
-- Auto-battle state is not in `getGameStateSnapshot()` — DOM inspection is the only fallback
-- Native crafting Redux actions cannot be dispatched outside a screen context — use `api.actions.executeCraftingTechnique()` within screens
-- `onGenerateExploreEvents` fires before weight expansion — see §3 above
-
-When you discover a new gap, consider filing a request with the game developer rather than building fragile workarounds.
-
-## 12. Defensive Coding Checklist
+## 8. Defensive Coding Checklist
 
 Before shipping any mod:
 
-- [ ] All `window.modAPI` access uses optional chaining (`?.`)
-- [ ] Duplicate installation guard is in place
+- [ ] All `window.modAPI` access uses optional chaining (see `typescript-afnm` skill)
+- [ ] Duplicate installation guard prevents re-initialization (e.g. `if (window.__myModInstalled) return;`)
 - [ ] Default flag values are initialized on startup
 - [ ] Flag keys are namespaced with mod name prefix
 - [ ] Debug API is exposed on `window.__afnmModDebug`
-- [ ] `disable_steam` cleanup is documented in testing instructions
 - [ ] `bun run release:validate` passes cleanly

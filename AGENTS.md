@@ -12,7 +12,9 @@ This template is the default starting point for new *Ascend From Nine Mountains*
 
 ## Documentation And Skill Stewardship
 
-If you discover inaccurate, stale, duplicated, or misleading information in any doc or `.agents/skills/*` file while working, fix it in the same change. Agents have standing permission to edit, correct, prune, or improve docs and skills so future agents do not inherit known traps. Verify corrections against code, tests, package scripts, or the installed-runtime oracle; if something cannot be fully verified, make the uncertainty explicit instead of presenting it as fact. Keep updates concise and run the relevant docs/validation checks after changing docs or skills.
+Agents have standing permission to edit, correct, prune, or improve any doc or `.agents/skills/*` file. If you discover inaccurate, stale, duplicated, or misleading information while working, fix it in the same change so future agents do not inherit known traps. Verify corrections against code, tests, package scripts, or the installed-runtime oracle; if something cannot be fully verified, make the uncertainty explicit instead of presenting it as fact. Run relevant validation checks after changing docs or skills. After completing your primary task, briefly inform the user of any doc or skill corrections you made and why.
+
+**Lean docs, single source of truth.** This template is written by AI for AI — verbose or repetitive docs degrade agent performance over time. Each fact should live in exactly one place; prefer cross-references over restating information. When adding content, keep it concise. When editing, look for opportunities to tighten or deduplicate. Do not compress artificially at the cost of losing genuinely useful information, but resist the tendency for docs to grow without bound.
 
 ## Project Layout
 
@@ -42,27 +44,47 @@ If you discover inaccurate, stale, duplicated, or misleading information in any 
 - `bun run runtime:grep -- "<pattern>"`
 - `bun run workshop:upload -- --change-note "vX.Y.Z - ..."`
 
+## Working Principles
+
+These are suggestions that tend to produce better outcomes, not rigid mandates.
+
+### Code Design
+
+- Prefer solutions that generalize well over one-off fixes that will need revisiting.
+- Prefer robust solutions over brittle or unnecessarily hacky ones.
+- Gather evidence to validate or invalidate assumptions before committing to an approach.
+- When in doubt between a simple solution and a clever one, lean toward simple.
+
+### Debugging
+
+- Debugging should be evidence-driven. If evidence is insufficient to determine root cause, increase logging or testing until it is.
+- See the `systematic-debugging` skill for the full four-phase methodology.
+
+### Code Comments
+
+Code comments and docstrings can save future agents significant time. Add them where the logic is non-obvious or where context would be lost without them.
+
 ## Essential Rules
 
 - Always use optional chaining on `window.modAPI` access: `window.modAPI?.hooks?.onLocationEnter?.()`
 - React, ReactDOM, MUI, and MUI Icons are externalized (provided by game runtime) — never bundle them
-- Import game types from the `afnm-types` package
+- Prefer importing game types from the `afnm-types` package
 - Run `bun run typecheck && bun run build` before committing
-- Trust the installed runtime over docs: `bun run runtime:grep -- "<symbol>"`
-- Follow commit prefixes: `feat:`, `fix:`, `docs:`, `perf:`, `chore:`
+- When docs and runtime disagree, trust the installed runtime: `bun run runtime:grep -- "<symbol>"`
+- Use commit prefixes: `feat:`, `fix:`, `docs:`, `perf:`, `chore:`
 
 ## Modding Rules
 
-- Prefer official state access in this order:
+- Prefer official state access in this order (see `AFNM_MODDING.md` § Fallback Ladder for details):
   1. `window.modAPI.getGameStateSnapshot()`
   2. `window.modAPI.subscribe()`
   3. `window.modAPI.injectUI()` / `registerOptionsUI()`
   4. raw store or DOM/fiber fallback only for verified gaps
-- Store mod settings in numeric global flags unless the data truly belongs to a save file.
-- Treat `window.modAPI.hooks.onReduxAction(...)` and `onReduxActionPayload(...)` as high-risk. They run inside the reducer path.
-- Treat `window.modAPI.hooks.onGenerateExploreEvents(...)` as pre-weight-expansion. It is not a direct “set final odds” hook.
+- Store mod settings in numeric global flags unless the data truly belongs to a save file (see `SUPPLEMENTARY_GUIDE.md` §4 for the pattern).
+- Treat `window.modAPI.hooks.onReduxAction(...)` and `onReduxActionPayload(...)` as high-risk — they run inside the reducer path (see `SUPPLEMENTARY_GUIDE.md` §3).
+- Treat `window.modAPI.hooks.onGenerateExploreEvents(...)` as pre-weight-expansion — it is not a direct "set final odds" hook (see `SUPPLEMENTARY_GUIDE.md` §3).
 - Use `fetch()` normally on `0.6.50+`, but keep failures non-fatal.
-- Keep game-shape assumptions centralized instead of scattering them across UI and logic modules.
+- Consider keeping game-shape assumptions centralized rather than scattering them across UI and logic modules.
 
 ## Validation Workflow
 
@@ -88,7 +110,7 @@ If you discover inaccurate, stale, duplicated, or misleading information in any 
 Skills in `.agents/skills/` provide workflow-specific guidance (auto-discovered by agents following the agentskills.io standard):
 
 **Start here:**
-- `afnm-modding/SKILL.md` — master orientation: project layout, fallback ladder, task-to-skill routing
+- `afnm-modding/SKILL.md` — task-to-skill routing table and AFNM-specific gotchas
 
 **AFNM-specific:**
 - `modapi-lookup/SKILL.md` — hook/action/util reference and classification

@@ -31,15 +31,7 @@ AFNM provides styled components through the screen API. Use them:
 
 ### Use the game's React and MUI runtime
 
-React, ReactDOM, MUI, and Emotion are provided by the game. They are externalized in webpack — do not bundle them.
-
-```typescript
-// Use window.React for createElement calls in options panels
-const createElement = window.React.createElement.bind(window.React);
-
-// Use MUI components in screen contexts where imports work
-import { Box, Typography } from '@mui/material';
-```
+React, ReactDOM, MUI, and Emotion are provided by the game and externalized in webpack (see `typescript-afnm` skill). Use `window.React.createElement` in options panels where JSX may be unavailable; use normal imports in screen contexts.
 
 ### Settings panel patterns
 
