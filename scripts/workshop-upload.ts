@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import { markdownToBbcode } from './markdown-to-bbcode';
 
 type CliArgs = {
   changeNote?: string;
@@ -72,7 +73,7 @@ function parseArgs(argv: string[], packageJson: PackageJson, repoRoot: string): 
       ? path.resolve(repoRoot, workshopDefaults.previewImagePath)
       : undefined,
     title: workshopDefaults.title,
-    description: workshopDefaults.description,
+    description: undefined, // resolved in main() via priority chain
     tags: workshopDefaults.tags?.join(','),
     visibility: workshopDefaults.visibility,
     skipBuild: false,
@@ -194,6 +195,21 @@ async function main(): Promise<void> {
     throw new Error(
       'Missing workshop ID. Set package.json#afnmWorkshop.workshopId, pass --workshop-id, or use --allow-create intentionally.',
     );
+  }
+
+  // Resolve description: --description CLI flag > DESCRIPTION.md > package.json (legacy)
+  if (!args.description) {
+    const descMdPath = path.join(repoRoot, 'DESCRIPTION.md');
+    if (fs.existsSync(descMdPath)) {
+      const md = fs.readFileSync(descMdPath, 'utf8');
+      args.description = markdownToBbcode(md);
+    } else if (packageJson.afnmWorkshop?.description) {
+      console.warn(
+        '\x1b[33mDESCRIPTION.md not found. Falling back to package.json#afnmWorkshop.description.\n'
+        + 'Consider creating DESCRIPTION.md for a better editing experience.\x1b[0m',
+      );
+      args.description = packageJson.afnmWorkshop.description;
+    }
   }
 
   const uploaderRoot = path.resolve(repoRoot, '..', 'ModUploader-AFNM');

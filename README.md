@@ -40,12 +40,13 @@ This template exists to give you:
    ```
    This installs dependencies, clones the [ModUploader-AFNM](https://github.com/lemon07r/ModUploader-AFNM) sibling repo (needed for Workshop uploads), detects your game installation, and verifies the build works. Works on Windows, macOS, and Linux.
 3. Update `package.json`:
-   - `name`
-   - `version`
-   - `description`
-   - `author`
-   - `afnmWorkshop.*` (title, description, tags, visibility)
-4. Replace the example logic in `src/modContent/index.ts`.
+    - `name`
+    - `version`
+    - `description`
+    - `author`
+    - `afnmWorkshop.*` (title, tags, visibility)
+4. Edit `DESCRIPTION.md` with your mod's public description (used on GitHub and converted to BBCode for Steam Workshop).
+5. Replace the example logic in `src/modContent/index.ts`.
 5. Run `bun run build`.
 6. Copy `builds/<package-name>.zip` into the installed game's `mods/` directory.
 
@@ -56,6 +57,7 @@ The template exposes a debug surface at `window.__afnmModDebug['<package-name>']
 Before you do real feature work, update:
 
 - `package.json` metadata and `afnmWorkshop` fields
+- `DESCRIPTION.md` with your mod's public description
 - the example settings/debug logic in `src/modContent/index.ts`
 - any placeholder public copy in this README if you keep it in your own repo
 
@@ -66,6 +68,8 @@ Start in `src/modContent/index.ts` for gameplay logic and settings wiring.
 <details>
 <summary>Expand full repository layout</summary>
 
+- `DESCRIPTION.md`
+  Canonical mod description. Markdown on GitHub, auto-converted to BBCode for Steam Workshop.
 - `src/mod.ts`
   Metadata/bootstrap entry for the AFNM mod loader.
 - `src/modContent/index.ts`
@@ -78,8 +82,10 @@ Start in `src/modContent/index.ts` for gameplay logic and settings wiring.
   Installed-runtime oracle for parity checks.
 - `scripts/copy-translations.js`
   Post-build translation staging — copies locale translation files from `translations/` into the dist folder before zipping, excluding the generated `template.json`.
+- `scripts/markdown-to-bbcode.ts`
+  Zero-dependency Markdown → Steam Workshop BBCode converter used by the upload script.
 - `scripts/workshop-upload.ts`
-  Upload wrapper around the sibling `../ModUploader-AFNM` repo.
+  Upload wrapper around the sibling `../ModUploader-AFNM` repo. Reads `DESCRIPTION.md` automatically.
 - `scripts/zip-dist.js`
   Post-build packaging — writes dist `package.json` and creates the zip.
 - `translations/`
@@ -123,7 +129,7 @@ bun run workshop:upload -- --change-note "v0.1.0 - Initial release" --allow-crea
 Before the first public upload, make sure you have set:
 
 - `afnmWorkshop.title`
-- `afnmWorkshop.description`
+- `DESCRIPTION.md` (converted to BBCode automatically)
 - `afnmWorkshop.previewImagePath`
 - either `afnmWorkshop.workshopId` or `--allow-create`
 

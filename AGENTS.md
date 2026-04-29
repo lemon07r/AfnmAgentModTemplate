@@ -16,13 +16,15 @@ If you discover inaccurate, stale, duplicated, or misleading information in any 
 
 ## Project Layout
 
+- `DESCRIPTION.md` is the canonical mod description. Rendered as Markdown on GitHub; auto-converted to BBCode for Steam Workshop uploads.
 - `src/modContent/index.ts` is the real runtime entrypoint.
 - `src/mod.ts` is the AFNM mod-loader bootstrap and metadata export.
 - `src/global.d.ts` is the shared typing boundary for `window.modAPI`, runtime React, and the template debug registry.
 - `scripts/mod-package.js` is the single metadata source of truth for build/package scripts.
 - `scripts/copy-translations.js` copies locale JSON files from `translations/` into `dist/<package-name>/translations/` after extraction/build, excluding the generated `template.json`.
 - `scripts/zip-dist.js` packages `dist/<package-name>/` into `builds/<package-name>.zip`.
-- `scripts/workshop-upload.ts` publishes through the sibling `../ModUploader-AFNM` repo.
+- `scripts/markdown-to-bbcode.ts` converts Markdown → Steam Workshop BBCode (zero dependencies).
+- `scripts/workshop-upload.ts` publishes through the sibling `../ModUploader-AFNM` repo. Reads `DESCRIPTION.md` automatically.
 - `scripts/installed-game-runtime.js` is the installed-runtime oracle; use it before assuming current AFNM behavior.
 - `docs/reference/MODAPI_QUICK_REFERENCE.md` is the compact ModAPI cheat sheet.
 - `docs/reference/AFNM_MODDING.md` is the practical modding reference with upstream links and game code patterns.
@@ -75,11 +77,11 @@ If you discover inaccurate, stale, duplicated, or misleading information in any 
 
 ## Release Workflow
 
-1. Finish code and docs.
+1. Finish code and docs. Update `DESCRIPTION.md` if the public description changed.
 2. Run `bun run release:validate`.
 3. Upload to Workshop: `bun run workshop:upload -- --change-note "vX.Y.Z - ..." --allow-create`
 4. Commit and push to `main`.
-5. Tag with `git tag vX.Y.Z && git push origin vX.Y.Z` to trigger the GitHub Release workflow.
+5. Tag with `git tag vX.Y.Z && git push origin vX.Y.Z` to trigger the GitHub Release workflow (uses `DESCRIPTION.md` as the release body).
 
 ## Available Skills
 
@@ -112,4 +114,4 @@ Skills in `.agents/skills/` provide workflow-specific guidance (auto-discovered 
 - The template debug surface is `window.__afnmModDebug['<package-name>']`.
 - React/MUI dependencies are already present so future agents can add overlay UI without first reshaping the toolchain.
 - `bun run build` now runs translation extraction before webpack, then copies locale translation files into the dist output before zipping. The generated `translations/template.json` stays as authoring scaffolding and is not packaged.
-- The `.github/workflows/release.yml` builds the mod and creates a GitHub Release when you push a `v*` tag.
+- The `.github/workflows/release.yml` builds the mod and creates a GitHub Release when you push a `v*` tag. The release body is composed from `DESCRIPTION.md` (if present) followed by auto-generated commit notes.

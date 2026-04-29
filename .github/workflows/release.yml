@@ -31,13 +31,38 @@ jobs:
         id: get_version
         run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
 
+      - name: Generate release body
+        id: release_body
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          AUTO_NOTES=$(gh api "repos/${{ github.repository }}/releases/generate-notes" \
+            -f tag_name="$TAG" --jq '.body' 2>/dev/null || true)
+
+          {
+            echo 'BODY<<RELEASE_BODY_EOF'
+            if [ -f DESCRIPTION.md ]; then
+              cat DESCRIPTION.md
+              if [ -n "$AUTO_NOTES" ]; then
+                echo ''
+                echo '---'
+                echo ''
+              fi
+            fi
+            if [ -n "$AUTO_NOTES" ]; then
+              echo "$AUTO_NOTES"
+            fi
+            echo 'RELEASE_BODY_EOF'
+          } >> "$GITHUB_OUTPUT"
+
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
           name: v${{ steps.get_version.outputs.VERSION }}
+          body: ${{ steps.release_body.outputs.BODY }}
           draft: false
           prerelease: false
-          generate_release_notes: true
           files: |
             builds/*.zip
         env:
