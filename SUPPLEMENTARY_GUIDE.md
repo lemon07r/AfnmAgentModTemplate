@@ -8,7 +8,7 @@ It distills the patterns learned while shipping:
 - `Lucky All Around`
 - `ElderGPT Spirit Ring`
 
-Unless noted otherwise, the runtime statements below were rechecked against `afnm-types@0.6.52-v2` and confirmed by the upstream developer on `2026-04-26`.
+Unless noted otherwise, the runtime statements below were rechecked against `afnm-types@0.6.53` and confirmed by the upstream developer.
 
 ## 1. Pick The Right Mod Shape First
 
@@ -45,8 +45,12 @@ Custom screens, stat viewers, inventory helpers, map tools, crafting assistants,
 Default stack:
 
 - `addScreen()` for full-page interfaces
-- `injectUI()` for small affordances in existing dialogs
+- `injectUI()` for small affordances in existing dialogs (with screen sub-slots like `'combat-topBarPlayerInfo'`, `'crafting-craftingScreen'`, `'stoneCutting-jadeCuttingScreen'`)
 - `useSelector()` and `useGameFlags()` inside screen components
+- `useKeybinding()` for keyboard shortcuts in screen contexts
+- `registerKeybinding()` for global mod hotkeys
+- `GameTooltip`, `GameTooltipBox`, `TooltipLine` for formatted tooltip displays
+- `utils.showToast()` for transient notifications
 - persistent overlay mounted to `document.body` if the UI must survive screen transitions
 - `actions.setModData()` for persistent mod state in save files
 
@@ -56,9 +60,11 @@ Changes probabilities, rewards, event pools, stat math, difficulty, or any setti
 
 Default stack:
 
-- mutation hooks (`onCalculateDamage`, `onBeforeCombat`, `onDeriveRecipeDifficulty`, `onEventDropItem`, `onGenerateExploreEvents`)
+- mutation hooks (`onCalculateDamage`, `onBeforeCombat`, `onBeforeCraft`, `onDeriveRecipeDifficulty`, `onEventDropItem`, `onGenerateExploreEvents`, `onCreatePlayerCombatEntity`, `onCreatePlayerCraftingEntity`)
 - numeric global flags for settings
 - `registerOptionsUI()` for a settings panel
+- `registerKeybinding()` for mod hotkeys
+- `utils.showToast()` for user feedback
 - minimal or no custom UI beyond settings
 
 ### Overhaul / rebalance
@@ -68,7 +74,10 @@ Wholesale changes to game balance — enemy stats, crafting difficulty, damage f
 Default stack:
 
 - `onCreateEnemyCombatEntity` for enemy stat changes
+- `onCreatePlayerCombatEntity` for player combat stat changes
+- `onCreatePlayerCraftingEntity` for player crafting stat changes
 - `onCalculateDamage` for damage formula changes
+- `onBeforeCraft` for pre-craft recipe/stat/entity modifications
 - `onDeriveRecipeDifficulty` for crafting rebalancing
 - `onBeforeCombat` for encounter composition changes
 - `onReduxAction` only as a last resort (runs inside reducer)
@@ -176,7 +185,7 @@ New combat buffs should use the explicit timing fields:
 - `onRoundStartEffects`
 - `onCombatStartEffects`
 
-Do not author new buffs with the legacy `onTechniqueEffects` + `afterTechnique` shape. Those fields are no longer read as of 0.6.52. All six timing fields listed above are confirmed implemented in the 0.6.52 runtime and typed in `afnm-types@0.6.52-v2`.
+Do not author new buffs with the legacy `onTechniqueEffects` + `afterTechnique` shape. Those fields are no longer read as of 0.6.52. All six timing fields listed above are confirmed implemented in the runtime and typed in `afnm-types`.
 
 ### Networking is no longer the blocker
 
@@ -323,12 +332,12 @@ git push origin v1.0.0
 
 ## 11. Hook Limitations and Missing Coverage
 
-Some game behaviors have no ModAPI interception point. Knowing these saves time:
+See `docs/reference/AFNM_MODDING.md` § "Known API Gaps" for the canonical table. Key points:
 
-- **World map events** — events triggered on location entry via `EventTrigger.tsx` have no interception hook. Use `addMapEventsToLocation` or `addEventsToLocation` as alternatives.
-- **Auto-battle state** — not exposed in `getGameStateSnapshot()`. DOM inspection is the only fallback.
-- **Crafting action dispatch** — no public API to dispatch native crafting Redux actions.
-- **Explore event `triggerChance`** — world map event trigger probability has no hook. The explore pool approach via `onGenerateExploreEvents` is the only stable path.
+- No interception hook for world map event `triggerChance` — use `addMapEventsToLocation` or `addEventsToLocation`
+- Auto-battle state is not in `getGameStateSnapshot()` — DOM inspection is the only fallback
+- Native crafting Redux actions cannot be dispatched outside a screen context — use `api.actions.executeCraftingTechnique()` within screens
+- `onGenerateExploreEvents` fires before weight expansion — see §3 above
 
 When you discover a new gap, consider filing a request with the game developer rather than building fragile workarounds.
 

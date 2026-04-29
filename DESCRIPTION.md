@@ -17,4 +17,4 @@ A brief description of what your mod does and who it is for.
 
 ## Compatibility
 
-Built for Ascend From Nine Mountains v0.6.52.
+Built for Ascend From Nine Mountains v0.6.53.

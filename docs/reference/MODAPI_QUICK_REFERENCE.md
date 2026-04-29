@@ -20,8 +20,15 @@ All methods are on `window.modAPI` unless noted otherwise.
 | Method | Signature | Notes |
 |--------|-----------|-------|
 | `actions.registerOptionsUI(component)` | `(ModOptionsFC) => void` | Settings panel in mod-loading dialog |
+| `actions.registerKeybinding(definition)` | `(KeybindingDefinition) => void` | Register custom keybinding; appears in Controls > Mods |
 | `injectUI(slotId, generator)` | `(string, InjectGenerator) => void` | Inject React content into a named game dialog/screen slot |
 | `addScreen(config)` | `({ key, component, music?, ambience? }) => void` | Register a full mod screen |
+
+### `injectUI` Slot Names
+
+- **Dialogs:** the dialog's DOM `id` (e.g. `'combat-victory'`)
+- **Full screens:** the `ScreenType` value (e.g. `'combat'`, `'location'`, `'crafting'`, `'jadeCutting'`)
+- **Screen sub-slots:** `'combat-topBarPlayerInfo'`, `'crafting-craftingScreen'`, `'stoneCutting-jadeCuttingScreen'`
 
 ## Screen/Options API Actions
 
@@ -47,9 +54,12 @@ options panels, and injected UI generators.
 
 | Hook | Parameters | Returns |
 |------|-----------|---------|
+| `hooks.onCreatePlayerCombatEntity` | `(player, combatEntity, breakthrough, gameFlags)` | `CombatEntity` |
+| `hooks.onCreatePlayerCraftingEntity` | `(player, craftingEntity, breakthrough, characters, gameFlags)` | `CraftingEntity` |
 | `hooks.onCreateEnemyCombatEntity` | `(enemy, combatEntity, gameFlags)` | `CombatEntity` |
 | `hooks.onCalculateDamage` | `(attacker, defender, damage, damageType, gameFlags)` | `number` |
 | `hooks.onBeforeCombat` | `(enemies[], playerState, gameFlags)` | `{ enemies, playerState }` |
+| `hooks.onBeforeCraft` | `(player, recipe, recipeStats, gameFlags)` | `{ recipe?, recipeStats?, player? } \| undefined` |
 | `hooks.onDeriveRecipeDifficulty` | `(recipe, recipeStats, gameFlags)` | `CraftingRecipeStats` |
 | `hooks.onGenerateExploreEvents` | `(locationId, events[], gameFlags)` | `LocationEvent[]` |
 | `hooks.onEventDropItem` | `(item, step, gameFlags)` | `ItemDesc` |
@@ -74,7 +84,7 @@ options panels, and injected UI generators.
 
 ## Combat Buff Timing
 
-AFNM `0.6.52` replaced the legacy `onTechniqueEffects` + `afterTechnique`
+AFNM `0.6.52+` replaced the legacy `onTechniqueEffects` + `afterTechnique`
 pattern for new combat buffs. Prefer these fields when authoring buff data:
 
 ```
@@ -167,6 +177,27 @@ actions.addHarmonyType(harmonyType, config)
 actions.overrideItemTypeToHarmonyType(mapping)
 ```
 
+## Content Registration — Keybindings
+
+```
+actions.registerKeybinding({
+  action: 'myMod.specialAction' as KeybindingAction,
+  category: 'general',
+  displayName: 'Special Action',
+  description: 'Performs a special action',
+  defaultKey: 'F',
+  allowRebind: true,
+})
+```
+
+Registered keybindings appear in Controls settings under a "Mods" section.
+Call during mod initialization. Permanent for the session once registered.
+
+Note: `KeybindingDefinition.action` is typed as the `KeybindingAction` union.
+Custom mod actions need a cast: `'myMod.action' as KeybindingAction`.
+
+Use `api.useKeybinding(priority, bindings)` in screen/UI contexts to respond to keys.
+
 ## Content Registration — Audio
 
 ```
@@ -242,21 +273,46 @@ utils.tPlural(count, one, other, variables?) // Translate pluralized copy
 utils.tr(key, variables?, context?) // Deferred translation object for data definitions
 ```
 
+## Utility Functions — Toast Notifications
+
+Added in `0.6.53`. On `window.modAPI.utils`.
+
+```
+utils.showToast(message)                              // Default info toast, 3s timeout
+utils.showToast(message, timeout)                     // Custom timeout in ms
+utils.showToast(message, timeout, style)              // 'info' | 'success' | 'warning' | 'error'
+utils.showToast(message, timeout, style, customStyle) // { bg?, border?, color? }
+```
+
+`message` accepts `React.ReactNode` (strings, JSX elements, etc.).
+
+## Utility Functions — Tooltip (Screen/Options/InjectUI Context)
+
+Available on `api.utils` inside screen components, options panels, and injectUI generators (on `ModReduxAPI`, not `window.modAPI.utils`).
+
+```
+api.utils.parseTooltipLine(tooltip)                         // Parse tooltip string -> styled ReactNode
+api.utils.expandTooltipTemplate(template, templateValues, addPeriod?)  // Expand <N> placeholders
+api.utils.expandTooltipTags(template)                       // Expand <tag> syntax to display text
+```
+
+Components for rendering tooltips (also on `api.components`):
+
+```
+api.components.GameTooltip      // Tooltip wrapper (provider, children, flipped?, disabled?, minimal?)
+api.components.GameTooltipBox   // Tooltip content box (isSecondary?, isAux?, removeWidthLimit?)
+api.components.TooltipLine      // Single tooltip line (children)
+```
+
 ## Utility Functions — Save Management
 
-Added in `0.6.52-v2`. These are on `window.modAPI.utils`, so they can be called
-from any mod context (no UI screen required).
+On `window.modAPI.utils`.
 
 ```
 utils.makeSave(filename)   // Create a character-scoped backup save file
 utils.loadSave(filename)   // Load a character-scoped backup save file
 utils.listSaves()          // List backup saves for the current character
 ```
-
-Note: `listSaves()` returns `Promise<SaveFileInfo[]>` but `afnm-types@0.6.52-v2`
-imports `SaveFileInfo` from a `./electron` module that is not shipped in the
-package. Infer the return type from `ReturnType<typeof modAPI.utils.listSaves>`
-until upstream exports it.
 
 ## Utility Functions — Other
 

@@ -25,6 +25,9 @@ AFNM provides styled components through the screen API. Use them:
 - `GameIconButton` for icon-only actions
 - `BackgroundImage` for screen backgrounds with particle effects
 - `PlayerComponent` to show the player character
+- `GameTooltip` for hover tooltips (wraps children with a tooltip provider)
+- `GameTooltipBox` for tooltip content containers
+- `TooltipLine` for individual tooltip lines
 
 ### Use the game's React and MUI runtime
 
@@ -69,10 +72,49 @@ For `registerOptionsUI` components:
 - Keep overlays small and non-intrusive
 - Provide a way to minimize or dismiss
 
+### Tooltip patterns
+
+Use the game's tooltip components for consistent styling:
+
+```typescript
+<GameTooltip provider={() => (
+  <GameTooltipBox>
+    <TooltipLine>Effect description here</TooltipLine>
+  </GameTooltipBox>
+)}>
+  <span>Hover target</span>
+</GameTooltip>
+```
+
+Use `api.utils.parseTooltipLine(tooltip)` to render tooltip strings with colour tags, element tags, buff/item references as styled React nodes.
+
+### Toast notifications
+
+Use `window.modAPI.utils.showToast()` for transient feedback:
+
+```typescript
+window.modAPI?.utils?.showToast?.('Settings saved', 2000, 'success');
+```
+
+### Keybinding integration
+
+Register global keybindings with `actions.registerKeybinding()` during init.
+Use `api.useKeybinding(priority, bindings)` in screen components for contextual shortcuts.
+
+### UI injection sub-slots
+
+Screen-specific injection points for targeted UI injection:
+
+- `'combat-topBarPlayerInfo'` — player info area in combat
+- `'crafting-craftingScreen'` — crafting screen container
+- `'stoneCutting-jadeCuttingScreen'` — jade cutting screen container
+
 ## Rules
 
 - Use GameDialog/GameButton instead of raw HTML elements in screen contexts.
 - Use `window.React.createElement` in options panels where JSX is unavailable.
 - Always include `PlayerComponent` in full screens unless custom-rendering the player.
 - Always provide a close/back action in dialogs (`onClose={() => actions.setScreen('location')}`).
+- Use `GameTooltip`/`GameTooltipBox`/`TooltipLine` for tooltips instead of custom tooltip implementations.
+- Use `showToast()` for transient user feedback instead of custom notification systems.
 - Test overlays across screen transitions (location, combat, crafting, events).

@@ -78,14 +78,14 @@ import type { ModAPI, ModOptionsFC, RootState, CombatEntity } from 'afnm-types';
 import { GAME_VERSION } from 'afnm-types';
 ```
 
-For newly-added APIs whose helper types are not exported directly, infer from the
+For APIs whose helper types are not exported directly, infer from the
 available method instead of importing private package paths:
 
 ```typescript
-import type { ModReduxAPI } from 'afnm-types';
+import type { ModAPI } from 'afnm-types';
 
 type ListedSave = Awaited<
-  ReturnType<ModReduxAPI['actions']['listSaves']>
+  ReturnType<ModAPI['utils']['listSaves']>
 >[number];
 ```
 

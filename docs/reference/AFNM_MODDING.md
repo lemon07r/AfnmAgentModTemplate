@@ -31,7 +31,7 @@ Read-only. Safe. Covers player stats, inventory, location, calendar, flags, and 
 ```typescript
 window.modAPI?.actions?.registerOptionsUI?.(MyOptionsComponent);
 window.modAPI?.injectUI?.('combat-victory', (api, el, inject) => { /* ... */ });
-window.modAPI?.addScreen?.({ key: 'myScreen', component: MyScreen });
+window.modAPI?.actions?.addScreen?.({ key: 'myScreen', component: MyScreen });
 ```
 
 For rendering settings, injecting UI into existing dialogs, or creating full mod screens.
@@ -104,7 +104,7 @@ Use live testing only when the oracle is insufficient (e.g., UI smoke tests, vis
 4. For DevTools access: launch with `--remote-debugging-port=9222`, then open `chrome://inspect` in Chrome
 5. **Delete `disable_steam` when done** — leaving it behind blocks Workshop mod loading
 
-## Known API Gaps (as of 0.6.52)
+## Known API Gaps (as of 0.6.53)
 
 These game behaviors have no official ModAPI interception point:
 
@@ -125,8 +125,19 @@ When you discover a new gap, consider filing a request with the game developer r
 - React, ReactDOM, MUI, and MUI Icons are provided by the game runtime — externalize them in webpack, do not bundle them
 - The game runtime exposes `window.React` — use it for `createElement` calls when JSX is not available
 - `registerOptionsUI` components receive `{ api }` with `api.components.GameButton` and `api.actions`
-- `afnm-types@0.6.52-v2` exposes `utils.makeSave()`, `utils.loadSave()`, and `utils.listSaves()` for character-scoped backup saves directly on `window.modAPI.utils` (previously these were on `ModReduxAPI` and required a UI screen context)
+- `utils.makeSave()`, `utils.loadSave()`, and `utils.listSaves()` are on `window.modAPI.utils` for character-scoped backup saves (no UI screen context required)
 - `actions.addToSectShop()` adds items directly to the Nine Mountain Sect Favour Exchange shop
 - `onReduxAction` and `onReduxActionPayload` run inside the reducer path — keep them fast, deterministic, side-effect-free
 - New combat buffs should use `beforeTechniqueEffects`, `afterTechniqueEffects`, and `onStackGainEffects`; legacy `onTechniqueEffects` and `afterTechnique` are no longer read as of 0.6.52
-- `afnm-types@0.6.52-v2` references a `SaveFileInfo` return type for `listSaves()` but does not ship/export `dist/electron.d.ts`; infer the return type from `ReturnType<typeof modAPI.utils.listSaves>` until upstream exports it
+
+### New in 0.6.53
+
+- **Player entity hooks:** `onCreatePlayerCombatEntity` and `onCreatePlayerCraftingEntity` allow modifying the player's combat or crafting entity after creation, before the session begins
+- **`onBeforeCraft`:** Modify recipe, recipe stats, or player crafting entity before crafting begins
+- **`onDeriveRecipeDifficulty` fix:** Now always includes `control` and `intensity` in the gameFlags parameter
+- **`registerKeybinding`:** Register custom keyboard shortcuts in `actions`; appears in Controls > Mods section. `KeybindingDefinition.action` is typed as the `KeybindingAction` union — custom mod actions need a cast: `'myMod.action' as KeybindingAction`
+- **Toast notifications:** `utils.showToast(message, timeout?, style?, customStyle?)` displays toast messages with `'info'`, `'success'`, `'warning'`, or `'error'` styles
+- **Tooltip components and utilities:** `GameTooltip`, `GameTooltipBox`, `TooltipLine` components plus `parseTooltipLine()`, `expandTooltipTemplate()`, `expandTooltipTags()` utilities — available on `ModReduxAPI` (screen/options/injectUI contexts)
+- **New `injectUI` sub-slots:** Screen-specific injection points like `'combat-topBarPlayerInfo'`, `'crafting-craftingScreen'`, `'stoneCutting-jadeCuttingScreen'`
+- **`useKeybinding` hook:** Available on `ModReduxAPI` for responding to keyboard shortcuts in screen/UI contexts
+- **Extraction utility:** `afnm-extract-translations` now supports an ignore patterns flag and produces cleaner `template.json` output

@@ -86,7 +86,7 @@ Docs and skills are editable working assets. If this skill, another skill, or an
 
 2. **`onGenerateExploreEvents` is pre-weight-expansion.** It fires before the game expands weighted pools into the final event list. Modifying odds here does not directly set final probabilities — it adjusts inputs to the expansion algorithm.
 
-3. **Numeric global flags only for settings.** Store mod settings in numeric global flags (`modAPI.setGlobalFlag`). Do not use string flags, localStorage, or save-file data for configuration that should persist across saves.
+3. **Numeric global flags only for settings.** Store mod settings in numeric global flags (`modAPI.actions.setGlobalFlag`). Do not use string flags, localStorage, or save-file data for configuration that should persist across saves.
 
 4. **`fetch()` works on 0.6.50+ but must be non-fatal.** Network calls can fail in offline/restricted environments. Always wrap in try/catch and degrade gracefully.
 

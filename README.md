@@ -1,8 +1,6 @@
 # AFNM Agent Mod Template
 
-A reusable starter repo for building *Ascend From Nine Mountains* mods with a workflow that already matches the current `0.6.52` ModAPI types, installed-runtime validation, and Steam Workshop packaging.
-
-Last local installed-runtime validation: `0.6.52-9df41ee` on `2026-04-26`.
+A reusable starter repo for building *Ascend From Nine Mountains* mods with a workflow that already matches the current `0.6.53` ModAPI types, installed-runtime validation, and Steam Workshop packaging.
 
 If you are handing this repo to an AI coding agent, have it read [AGENTS.md](./AGENTS.md) first.
 

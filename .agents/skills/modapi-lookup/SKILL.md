@@ -27,6 +27,10 @@ When working with AFNM ModAPI hooks, actions, or utilities, consult `docs/refere
 - Always use optional chaining when calling ModAPI methods: `window.modAPI?.hooks?.onLocationEnter?.()`
 - Understand the hook classification before using it:
   - **Observation hooks** (no return value): `onLocationEnter`, `onLootDrop`, `onAdvanceDay`, `onAdvanceMonth`
-  - **Mutation hooks** (return value modifies gameplay): `onCalculateDamage`, `onBeforeCombat`, `onEventDropItem`, `onGenerateExploreEvents`, `onDeriveRecipeDifficulty`, `onCreateEnemyCombatEntity`
+  - **Mutation hooks** (return value modifies gameplay): `onCreatePlayerCombatEntity`, `onCreatePlayerCraftingEntity`, `onCreateEnemyCombatEntity`, `onCalculateDamage`, `onBeforeCombat`, `onBeforeCraft`, `onDeriveRecipeDifficulty`, `onEventDropItem`, `onGenerateExploreEvents`
+  - **Completion hooks** (return additional `EventStep[]`): `onCompleteCombat`, `onCompleteTournament`, `onCompleteDualCultivation`, `onCompleteCrafting`, `onCompleteAuction`, `onCompleteStoneCutting`
   - **Dangerous hooks**: `onReduxAction` and `onReduxActionPayload` run inside the reducer path — keep fast, deterministic, side-effect-free
+- For keybinding registration, use `actions.registerKeybinding()` — custom action names need a cast: `'myMod.action' as KeybindingAction`
+- For toast notifications, use `utils.showToast()` — on `window.modAPI.utils`, not the screen API
+- Tooltip utilities (`parseTooltipLine`, `expandTooltipTemplate`, `expandTooltipTags`) and components (`GameTooltip`, `GameTooltipBox`, `TooltipLine`) are on `ModReduxAPI` — available in screen, options, and injectUI contexts only
 - Prefer the official API in order: snapshot -> subscribe -> hooks -> injectUI -> raw store -> DOM scraping
