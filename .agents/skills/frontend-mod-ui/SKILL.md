@@ -93,13 +93,39 @@ window.modAPI?.utils?.showToast?.('Settings saved', 2000, 'success');
 Register global keybindings with `actions.registerKeybinding()` during init.
 Use `api.useKeybinding(priority, bindings)` in screen components for contextual shortcuts.
 
-### UI injection sub-slots
+### UI injection sub-slots and positioning
 
 Screen-specific injection points for targeted UI injection:
 
 - `'combat-topBarPlayerInfo'` — player info area in combat
 - `'crafting-craftingScreen'` — crafting screen container
 - `'stoneCutting-jadeCuttingScreen'` — jade cutting screen container
+
+The `inject` helper supports a `position` parameter (added in `0.6.54`):
+
+```typescript
+inject(selector, content, mode?, position?)
+// position: 'inside' (default) | 'before' | 'after'
+// 'before' inserts before the matched element
+// 'after' inserts after the matched element
+```
+
+### Game settings access
+
+Use `api.useGameSettings()` in screen components to read/write game settings:
+
+```typescript
+const settings = api.useGameSettings();
+// settings.skipSeenDialogue, settings.setSkipSeenDialogue(true), etc.
+```
+
+### Save state checks
+
+Use `api.hasSave` (reactive boolean) or `api.utils.hasSave()` (imperative) to gate save-specific UI.
+
+### Force UI refresh
+
+Use `window.modAPI?.actions?.triggerUIReset?.()` to force all UIRefreshWrapper components to unmount and remount.
 
 ## Rules
 

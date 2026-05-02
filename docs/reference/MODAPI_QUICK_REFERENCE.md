@@ -21,25 +21,37 @@ All methods are on `window.modAPI` unless noted otherwise.
 |--------|-----------|-------|
 | `actions.registerOptionsUI(component)` | `(ModOptionsFC) => void` | Settings panel in mod-loading dialog |
 | `actions.registerKeybinding(definition)` | `(KeybindingDefinition) => void` | Register custom keybinding; appears in Controls > Mods |
+| `actions.triggerUIReset()` | `() => void` | Force all UIRefreshWrapper-wrapped components to unmount/remount. Added in `0.6.54`. |
 | `injectUI(slotId, generator)` | `(string, InjectGenerator) => void` | Inject React content into a named game dialog/screen slot |
 | `addScreen(config)` | `({ key, component, music?, ambience? }) => void` | Register a full mod screen |
 
-### `injectUI` Slot Names
+### `injectUI` Slot Names and Positioning
 
 - **Dialogs:** the dialog's DOM `id` (e.g. `'combat-victory'`)
 - **Full screens:** the `ScreenType` value (e.g. `'combat'`, `'location'`, `'crafting'`, `'jadeCutting'`)
 - **Screen sub-slots:** `'combat-topBarPlayerInfo'`, `'crafting-craftingScreen'`, `'stoneCutting-jadeCuttingScreen'`
 
-## Screen/Options API Actions
+The `inject` helper's 4th parameter (`position`) controls placement relative to the matched element (added in `0.6.54`):
 
-These methods are available from the `api.actions` object passed to mod screens,
+```
+inject(selector, content, mode?, position?)
+// position: 'inside' (default) | 'before' | 'after'
+```
+
+## Screen/Options API (ModReduxAPI)
+
+Methods and hooks available from the `api` object passed to mod screens,
 options panels, and injected UI generators.
 
 | Method | Notes |
 |--------|-------|
-| `setModData(modName, key, data)` | Store save-scoped JSON-serializable mod data |
-| `executeCraftingTechnique(technique)` | Execute a resolved crafting technique during an active crafting session |
-| `previewCraftingTechnique(technique, state)` | Preview crafting technique results without dispatching Redux actions |
+| `api.actions.setModData(modName, key, data)` | Store save-scoped JSON-serializable mod data |
+| `api.actions.executeCraftingTechnique(technique)` | Execute a resolved crafting technique during an active crafting session |
+| `api.actions.previewCraftingTechnique(technique, state)` | Preview crafting technique results without dispatching Redux actions |
+| `api.hasSave` | `boolean` property — whether a save is currently loaded. Reactive (re-renders on change). Added in `0.6.54`. |
+| `api.useGameSettings()` | Returns `GameSettingsProps` — access to game settings with getters and setters. Added in `0.6.54`. |
+| `api.utils.hasSave()` | `() => boolean` — imperative save-loaded check (non-reactive). Added in `0.6.54`. |
+| `api.utils.getCurrentState()` | `() => RootState \| null` — direct Redux state access outside React. Added in `0.6.54`. |
 
 ## Lifecycle Hooks — Observation (no return value)
 
@@ -60,9 +72,21 @@ options panels, and injected UI generators.
 | `hooks.onCalculateDamage` | `(attacker, defender, damage, damageType, gameFlags)` | `number` |
 | `hooks.onBeforeCombat` | `(enemies[], playerState, gameFlags)` | `{ enemies, playerState }` |
 | `hooks.onBeforeCraft` | `(player, recipe, recipeStats, gameFlags)` | `{ recipe?, recipeStats?, player? } \| undefined` |
+| `hooks.onModifyRecipeIngredients` | `(recipe, gameFlags)` | `RecipeItem` |
 | `hooks.onDeriveRecipeDifficulty` | `(recipe, recipeStats, gameFlags)` | `CraftingRecipeStats` |
 | `hooks.onGenerateExploreEvents` | `(locationId, events[], gameFlags)` | `LocationEvent[]` |
 | `hooks.onEventDropItem` | `(item, step, gameFlags)` | `ItemDesc` |
+
+## Lifecycle Hooks — Equipment Upgrade & Reforge (0.6.54+)
+
+These hooks intercept the equipment upgrade and reforge flows. Return `{ costItems?, resultItem? }` to override, or `undefined` to leave unchanged.
+
+| Hook | Parameters | When |
+|------|-----------|------|
+| `hooks.onDeriveEquipmentUpgradeRequirement` | `(baseItem, costItems, resultItem, gameFlags)` | Before upgrade dialog is shown |
+| `hooks.onCompleteEquipmentUpgrade` | `(baseItem, costItems, resultItem, gameFlags)` | Before upgrade completion dialog |
+| `hooks.onDeriveEquipmentReforgeRequirement` | `(baseItem, costItems, resultItem, gameFlags)` | Before reforge dialog is shown |
+| `hooks.onCompleteEquipmentReforge` | `(baseItem, costItems, resultItem, gameFlags)` | Before reforge completion dialog |
 
 ## Lifecycle Hooks — Completion (return additional event steps)
 
@@ -80,7 +104,7 @@ options panels, and injected UI generators.
 | Hook | Parameters | Returns | Warning |
 |------|-----------|---------|---------|
 | `hooks.onReduxAction` | `(actionType, stateBefore, stateAfter, payload)` | `RootState` | Runs inside the reducer after action payload interception. Keep fast, deterministic, no side-effects. Prefer `subscribe()` when possible. |
-| `hooks.onReduxActionPayload` | `(actionType, payload)` | `unknown \| null` | Runs before the reducer. Return a replacement payload, or `null` to drop the action. Keep fast, deterministic, no side-effects. |
+| `hooks.onReduxActionPayload` | `(actionType, payload)` | `unknown \| null` | Runs before the reducer. Return a replacement payload, or `null` to drop the action. Keep fast, deterministic, no side-effects. Note: patch notes mention a current state parameter was added at runtime, but `afnm-types@0.6.54` does not yet reflect this in the type signature. |
 
 ## Combat Buff Timing
 
@@ -313,6 +337,25 @@ utils.makeSave(filename)   // Create a character-scoped backup save file
 utils.loadSave(filename)   // Load a character-scoped backup save file
 utils.listSaves()          // List backup saves for the current character
 ```
+
+## Utility Functions — Keybinding Query
+
+```
+utils.getRegisteredKeybindValue(action)  // Returns current bound key string or undefined
+```
+
+Already documented under Content Registration — Keybindings, listed here for completeness.
+
+## Utility Functions — Save State (0.6.54+)
+
+On `ModReduxAPI.utils` (screen/options/injectUI contexts):
+
+```
+api.utils.hasSave()            // Whether a save is currently loaded
+api.utils.getCurrentState()    // Direct Redux state access outside React
+```
+
+Also available as `api.hasSave` boolean property (reactive, re-renders components).
 
 ## Utility Functions — Other
 

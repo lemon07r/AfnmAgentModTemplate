@@ -104,7 +104,7 @@ Use live testing only when the oracle is insufficient (e.g., UI smoke tests, vis
 4. For DevTools access: launch with `--remote-debugging-port=9222`, then open `chrome://inspect` in Chrome
 5. **Delete `disable_steam` when done** — leaving it behind blocks Workshop mod loading
 
-## Known API Gaps (as of 0.6.53)
+## Known API Gaps (as of 0.6.54)
 
 These game behaviors have no official ModAPI interception point:
 
@@ -139,8 +139,18 @@ For method signatures and hook parameters, see `MODAPI_QUICK_REFERENCE.md`. For 
 
 - `onCreatePlayerCombatEntity` and `onCreatePlayerCraftingEntity` modify the player entity after creation, before the session begins
 - `onBeforeCraft` modifies recipe, recipe stats, or player crafting entity before crafting begins
+- `onModifyRecipeIngredients` dynamically alters recipe ingredients before UI and NPC encounters; runs before `onDeriveRecipeDifficulty` (added in `0.6.54`)
 - `onDeriveRecipeDifficulty` always includes `control` and `intensity` in the gameFlags parameter
+- Equipment upgrade/reforge hooks (`onDeriveEquipmentUpgradeRequirement`, `onCompleteEquipmentUpgrade`, `onDeriveEquipmentReforgeRequirement`, `onCompleteEquipmentReforge`) allow overriding costs and results (added in `0.6.54`)
 - Combat buffs: use `beforeTechniqueEffects`, `afterTechniqueEffects`, `onStackGainEffects`; legacy `onTechniqueEffects` + `afterTechnique` are no longer read as of 0.6.52
-- `registerKeybinding` registers custom keyboard shortcuts (Controls > Mods); `useKeybinding` responds to them in screen contexts
+- `registerKeybinding` registers custom keyboard shortcuts (Controls > Mods); `useKeybinding` responds to them in screen contexts; `utils.getRegisteredKeybindValue(action)` reads the current bound key at runtime
 - `utils.makeSave()`, `utils.loadSave()`, and `utils.listSaves()` are on `window.modAPI.utils` (no screen context required)
 - `actions.addToSectShop()` adds items directly to the Nine Mountain Sect Favour Exchange shop
+- `actions.triggerUIReset()` forces all UIRefreshWrapper components to unmount/remount (added in `0.6.54`)
+
+### Screen/Options API (0.6.54+)
+
+- `api.hasSave` boolean and `api.utils.hasSave()` — check if a save is loaded
+- `api.utils.getCurrentState()` — direct Redux state access outside React hooks
+- `api.useGameSettings()` — access game settings with getters/setters (e.g., `enableStancePreview`, `skipSeenDialogue`, `sexuality`)
+- `injectUI` `inject` helper now supports a `position` parameter: `'inside'` (default), `'before'`, `'after'`

@@ -25,8 +25,15 @@ When working with AFNM ModAPI hooks, actions, or utilities, consult `docs/refere
 ## Guidelines
 
 - Use optional chaining when calling ModAPI methods (see `typescript-afnm` skill for patterns)
-- Understand the hook classification before using it — see `MODAPI_QUICK_REFERENCE.md` for the full table (observation, mutation, completion, dangerous)
+- Understand the hook classification before using it — see `MODAPI_QUICK_REFERENCE.md` for the full table (observation, mutation, completion, equipment, dangerous)
+- Equipment upgrade/reforge hooks (`onDerive*Requirement`, `onComplete*`) allow overriding costs and result items — return `{ costItems?, resultItem? }` or `undefined`
+- `onModifyRecipeIngredients` runs before `onDeriveRecipeDifficulty` — use it to alter recipe ingredients dynamically
 - For keybinding registration, use `actions.registerKeybinding()` — custom action names need a cast: `'myMod.action' as KeybindingAction`
+- Use `utils.getRegisteredKeybindValue(action)` to read the current bound key at runtime
 - Toast notifications are on `window.modAPI.utils.showToast()`, not the screen API
 - Tooltip utilities and components are on `ModReduxAPI` — available in screen, options, and injectUI contexts only
+- `api.hasSave` / `api.utils.hasSave()` — check save state in screen/options/injectUI contexts
+- `api.useGameSettings()` — access game settings with getters/setters in screen contexts
+- `actions.triggerUIReset()` forces a full component remount
+- `injectUI` inject helper supports `position` parameter: `'inside'`, `'before'`, `'after'`
 - Prefer the official API fallback order from `AGENTS.md` § Modding Rules

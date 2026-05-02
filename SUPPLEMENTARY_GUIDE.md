@@ -8,7 +8,7 @@ It distills the patterns learned while shipping:
 - `Lucky All Around`
 - `ElderGPT Spirit Ring`
 
-Unless noted otherwise, the runtime statements below were rechecked against `afnm-types@0.6.53` and confirmed by the upstream developer.
+Unless noted otherwise, the runtime statements below were rechecked against `afnm-types@0.6.54` and confirmed by the upstream developer.
 
 ## 1. Pick The Right Mod Shape First
 
@@ -46,8 +46,10 @@ Default stack:
 
 - `addScreen()` for full-page interfaces
 - `injectUI()` for small affordances in existing dialogs (with screen sub-slots like `'combat-topBarPlayerInfo'`, `'crafting-craftingScreen'`, `'stoneCutting-jadeCuttingScreen'`)
-- `useSelector()` and `useGameFlags()` inside screen components
+- `useSelector()`, `useGameFlags()`, and `useGameSettings()` inside screen components
 - `useKeybinding()` for keyboard shortcuts in screen contexts
+- `api.utils.hasSave()` / `api.hasSave` to gate save-specific UI
+- `actions.triggerUIReset()` for full component remount
 - `registerKeybinding()` for global mod hotkeys
 - `GameTooltip`, `GameTooltipBox`, `TooltipLine` for formatted tooltip displays
 - `utils.showToast()` for transient notifications
@@ -60,7 +62,8 @@ Changes probabilities, rewards, event pools, stat math, difficulty, or any setti
 
 Default stack:
 
-- mutation hooks (`onCalculateDamage`, `onBeforeCombat`, `onBeforeCraft`, `onDeriveRecipeDifficulty`, `onEventDropItem`, `onGenerateExploreEvents`, `onCreatePlayerCombatEntity`, `onCreatePlayerCraftingEntity`)
+- mutation hooks (`onCalculateDamage`, `onBeforeCombat`, `onBeforeCraft`, `onModifyRecipeIngredients`, `onDeriveRecipeDifficulty`, `onEventDropItem`, `onGenerateExploreEvents`, `onCreatePlayerCombatEntity`, `onCreatePlayerCraftingEntity`)
+- equipment hooks (`onDeriveEquipmentUpgradeRequirement`, `onCompleteEquipmentUpgrade`, `onDeriveEquipmentReforgeRequirement`, `onCompleteEquipmentReforge`) for overriding upgrade/reforge costs and results
 - numeric global flags for settings
 - `registerOptionsUI()` for a settings panel
 - `registerKeybinding()` for mod hotkeys
@@ -78,7 +81,10 @@ Default stack:
 - `onCreatePlayerCraftingEntity` for player crafting stat changes
 - `onCalculateDamage` for damage formula changes
 - `onBeforeCraft` for pre-craft recipe/stat/entity modifications
+- `onModifyRecipeIngredients` for dynamic ingredient alteration (runs before `onDeriveRecipeDifficulty`)
 - `onDeriveRecipeDifficulty` for crafting rebalancing
+- `onDeriveEquipmentUpgradeRequirement` / `onCompleteEquipmentUpgrade` for upgrade cost/result changes
+- `onDeriveEquipmentReforgeRequirement` / `onCompleteEquipmentReforge` for reforge cost/result changes
 - `onBeforeCombat` for encounter composition changes
 - `onReduxAction` only as a last resort (runs inside reducer)
 
