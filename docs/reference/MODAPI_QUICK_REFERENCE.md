@@ -48,10 +48,7 @@ options panels, and injected UI generators.
 | `api.actions.setModData(modName, key, data)` | Store save-scoped JSON-serializable mod data |
 | `api.actions.executeCraftingTechnique(technique)` | Execute a resolved crafting technique during an active crafting session |
 | `api.actions.previewCraftingTechnique(technique, state)` | Preview crafting technique results without dispatching Redux actions |
-| `api.hasSave` | `boolean` property — whether a save is currently loaded. Reactive (re-renders on change). Added in `0.6.54`. |
 | `api.useGameSettings()` | Returns `GameSettingsProps` — access to game settings with getters and setters. Added in `0.6.54`. |
-| `api.utils.hasSave()` | `() => boolean` — imperative save-loaded check (non-reactive). Added in `0.6.54`. |
-| `api.utils.getCurrentState()` | `() => RootState \| null` — direct Redux state access outside React. Added in `0.6.54`. |
 
 ## Lifecycle Hooks — Observation (no return value)
 
@@ -104,7 +101,30 @@ These hooks intercept the equipment upgrade and reforge flows. Return `{ costIte
 | Hook | Parameters | Returns | Warning |
 |------|-----------|---------|---------|
 | `hooks.onReduxAction` | `(actionType, stateBefore, stateAfter, payload)` | `RootState` | Runs inside the reducer after action payload interception. Keep fast, deterministic, no side-effects. Prefer `subscribe()` when possible. |
-| `hooks.onReduxActionPayload` | `(actionType, payload)` | `unknown \| null` | Runs before the reducer. Return a replacement payload, or `null` to drop the action. Keep fast, deterministic, no side-effects. Note: patch notes mention a current state parameter was added at runtime, but `afnm-types@0.6.54` does not yet reflect this in the type signature. |
+| `hooks.onReduxActionPayload` | `(actionType, payload, stateBefore)` | `unknown \| null` | Runs before the reducer. Return a replacement payload, or `null` to drop the action. Keep fast, deterministic, no side-effects. `stateBefore` added in `0.6.54-3`. |
+
+## Lifecycle Hooks — New Game (0.6.54-3+)
+
+| Hook | Parameters | Returns |
+|------|-----------|---------|
+| `hooks.onNewGame` | `(intent: NewGameIntent)` | `NewGameIntent` |
+
+Override all parameters of a new game: starting items, techniques, recipes, destinies, quests, money, favour, flags, player entity, and crafting actions.
+
+```
+interface NewGameIntent {
+  items: ItemDesc[];
+  techniques: string[];
+  recipes: string[];
+  destinies: string[];
+  quests: string[];
+  money: number;
+  favour: number;
+  flags: Record<string, number>;
+  player: PlayerEntity;
+  craftingActions: string[];
+}
+```
 
 ## Combat Buff Timing
 
@@ -205,7 +225,7 @@ actions.overrideItemTypeToHarmonyType(mapping)
 
 ```
 actions.registerKeybinding({
-  action: 'myMod.specialAction' as KeybindingAction,
+  action: 'myMod.specialAction',
   category: 'general',
   displayName: 'Special Action',
   description: 'Performs a special action',
@@ -217,8 +237,7 @@ actions.registerKeybinding({
 Registered keybindings appear in Controls settings under a "Mods" section.
 Call during mod initialization. Permanent for the session once registered.
 
-Note: `KeybindingDefinition.action` is typed as the `KeybindingAction` union.
-Custom mod actions need a cast: `'myMod.action' as KeybindingAction`.
+Note: As of `0.6.54-3`, `KeybindingDefinition.action` accepts plain strings — no cast needed for custom mod actions.
 
 Use `api.useKeybinding(priority, bindings)` in screen/UI contexts to respond to keys.
 
@@ -338,24 +357,12 @@ utils.loadSave(filename)   // Load a character-scoped backup save file
 utils.listSaves()          // List backup saves for the current character
 ```
 
-## Utility Functions — Keybinding Query
+## Utility Functions — Keybinding & Save State Query
 
 ```
 utils.getRegisteredKeybindValue(action)  // Returns current bound key string or undefined
+utils.getHasSaveLoaded()                 // Whether a save is currently loaded (0.6.54-3+)
 ```
-
-Already documented under Content Registration — Keybindings, listed here for completeness.
-
-## Utility Functions — Save State (0.6.54+)
-
-On `ModReduxAPI.utils` (screen/options/injectUI contexts):
-
-```
-api.utils.hasSave()            // Whether a save is currently loaded
-api.utils.getCurrentState()    // Direct Redux state access outside React
-```
-
-Also available as `api.hasSave` boolean property (reactive, re-renders components).
 
 ## Utility Functions — Other
 

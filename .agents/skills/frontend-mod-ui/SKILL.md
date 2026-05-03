@@ -121,7 +121,7 @@ const settings = api.useGameSettings();
 
 ### Save state checks
 
-Use `api.hasSave` (reactive boolean) or `api.utils.hasSave()` (imperative) to gate save-specific UI.
+Use `window.modAPI?.utils?.getHasSaveLoaded?.()` to check if a save is loaded before accessing save-specific state.
 
 ### Force UI refresh
 

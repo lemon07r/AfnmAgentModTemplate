@@ -28,12 +28,14 @@ When working with AFNM ModAPI hooks, actions, or utilities, consult `docs/refere
 - Understand the hook classification before using it — see `MODAPI_QUICK_REFERENCE.md` for the full table (observation, mutation, completion, equipment, dangerous)
 - Equipment upgrade/reforge hooks (`onDerive*Requirement`, `onComplete*`) allow overriding costs and result items — return `{ costItems?, resultItem? }` or `undefined`
 - `onModifyRecipeIngredients` runs before `onDeriveRecipeDifficulty` — use it to alter recipe ingredients dynamically
-- For keybinding registration, use `actions.registerKeybinding()` — custom action names need a cast: `'myMod.action' as KeybindingAction`
+- For keybinding registration, use `actions.registerKeybinding()` — as of `0.6.54-3`, `action` accepts plain strings (no cast needed)
 - Use `utils.getRegisteredKeybindValue(action)` to read the current bound key at runtime
 - Toast notifications are on `window.modAPI.utils.showToast()`, not the screen API
 - Tooltip utilities and components are on `ModReduxAPI` — available in screen, options, and injectUI contexts only
-- `api.hasSave` / `api.utils.hasSave()` — check save state in screen/options/injectUI contexts
+- `utils.getHasSaveLoaded()` — check if a save is loaded (on `window.modAPI.utils`)
 - `api.useGameSettings()` — access game settings with getters/setters in screen contexts
 - `actions.triggerUIReset()` forces a full component remount
+- `hooks.onNewGame(intent => modifiedIntent)` — override new game parameters (items, flags, money, player, etc.)
+- `onReduxActionPayload` now receives `stateBefore` as 3rd parameter
 - `injectUI` inject helper supports `position` parameter: `'inside'`, `'before'`, `'after'`
 - Prefer the official API fallback order from `AGENTS.md` § Modding Rules

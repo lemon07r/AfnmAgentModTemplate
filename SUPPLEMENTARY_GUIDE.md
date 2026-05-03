@@ -48,7 +48,7 @@ Default stack:
 - `injectUI()` for small affordances in existing dialogs (with screen sub-slots like `'combat-topBarPlayerInfo'`, `'crafting-craftingScreen'`, `'stoneCutting-jadeCuttingScreen'`)
 - `useSelector()`, `useGameFlags()`, and `useGameSettings()` inside screen components
 - `useKeybinding()` for keyboard shortcuts in screen contexts
-- `api.utils.hasSave()` / `api.hasSave` to gate save-specific UI
+- `utils.getHasSaveLoaded()` to gate save-specific UI
 - `actions.triggerUIReset()` for full component remount
 - `registerKeybinding()` for global mod hotkeys
 - `GameTooltip`, `GameTooltipBox`, `TooltipLine` for formatted tooltip displays
