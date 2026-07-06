@@ -28,7 +28,7 @@ When working with AFNM ModAPI hooks, actions, or utilities, consult `docs/refere
 - Understand the hook classification before using it — see `MODAPI_QUICK_REFERENCE.md` for the full table (observation, mutation, completion, equipment, dangerous)
 - Equipment upgrade/reforge hooks (`onDerive*Requirement`, `onComplete*`) allow overriding costs and result items — return `{ costItems?, resultItem? }` or `undefined`
 - `onModifyRecipeIngredients` runs before `onDeriveRecipeDifficulty` — use it to alter recipe ingredients dynamically
-- For keybinding registration, use `actions.registerKeybinding()` — as of `0.6.54-3`, `action` accepts plain strings (no cast needed)
+- For keybinding registration, use `actions.registerKeybinding()`; `action` accepts plain strings (no cast needed)
 - Use `utils.getRegisteredKeybindValue(action)` to read the current bound key at runtime
 - Toast notifications are on `window.modAPI.utils.showToast()`, not the screen API
 - Tooltip utilities and components are on `ModReduxAPI` — available in screen, options, and injectUI contexts only

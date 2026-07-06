@@ -1,6 +1,6 @@
 # AFNM Agent Mod Template
 
-A reusable starter repo for building *Ascend From Nine Mountains* mods with a workflow that already matches the current `0.6.53` ModAPI types, installed-runtime validation, and Steam Workshop packaging.
+A reusable starter repo for building *Ascend From Nine Mountains* mods with a workflow that matches the current AFNM `0.7.x` ModAPI types, installed-runtime validation, and Steam Workshop packaging.
 
 If you are handing this repo to an AI coding agent, have it read [AGENTS.md](./AGENTS.md) first.
 
@@ -136,7 +136,7 @@ Before the first public upload, make sure you have set:
 - Use `window.modAPI.getGameStateSnapshot()` for read-only state.
 - Use `window.modAPI.subscribe()` for reactive updates.
 - Use `window.modAPI.actions.registerOptionsUI(...)` for mod settings before inventing your own settings surface.
-- Use `window.modAPI.injectUI(...)` for screen- or dialog-local affordances.
+- Use `window.modAPI.injectUI(slot, (api, inject) => ...)` for screen- or dialog-local affordances.
 - Use a persistent body-mounted overlay only when the UI truly must survive screen transitions.
 - Keep game-shape assumptions centralized in `src/modContent/` or a dedicated `src/integration/` folder if the mod grows.
 

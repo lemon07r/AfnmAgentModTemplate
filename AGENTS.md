@@ -83,7 +83,7 @@ Code comments and docstrings can save future agents significant time. Add them w
 - Store mod settings in numeric global flags unless the data truly belongs to a save file (see `SUPPLEMENTARY_GUIDE.md` §4 for the pattern).
 - Treat `window.modAPI.hooks.onReduxAction(...)` and `onReduxActionPayload(...)` as high-risk — they run inside the reducer path (see `SUPPLEMENTARY_GUIDE.md` §3).
 - Treat `window.modAPI.hooks.onGenerateExploreEvents(...)` as pre-weight-expansion — it is not a direct "set final odds" hook (see `SUPPLEMENTARY_GUIDE.md` §3).
-- Use `fetch()` normally on `0.6.50+`, but keep failures non-fatal.
+- Use `fetch()` normally on AFNM `0.7.x`, but keep failures non-fatal.
 - Consider keeping game-shape assumptions centralized rather than scattering them across UI and logic modules.
 
 ## Validation Workflow

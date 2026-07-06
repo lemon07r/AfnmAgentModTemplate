@@ -101,13 +101,11 @@ Screen-specific injection points for targeted UI injection:
 - `'crafting-craftingScreen'` — crafting screen container
 - `'stoneCutting-jadeCuttingScreen'` — jade cutting screen container
 
-The `inject` helper supports a `position` parameter (added in `0.6.54`):
+The `inject` helper accepts a placement parameter:
 
 ```typescript
-inject(selector, content, mode?, position?)
-// position: 'inside' (default) | 'before' | 'after'
-// 'before' inserts before the matched element
-// 'after' inserts after the matched element
+inject(selectorOrElement, content, placement?)
+// Common placements: 'after', 'before', 'appendChild', 'prependChild', 'overlay'
 ```
 
 ### Game settings access

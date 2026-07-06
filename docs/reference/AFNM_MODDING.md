@@ -30,7 +30,7 @@ Read-only. Safe. Covers player stats, inventory, location, calendar, flags, and 
 
 ```typescript
 window.modAPI?.actions?.registerOptionsUI?.(MyOptionsComponent);
-window.modAPI?.injectUI?.('combat-victory', (api, el, inject) => { /* ... */ });
+window.modAPI?.injectUI?.('combat-victory', (api, inject) => { /* ... */ });
 window.modAPI?.actions?.addScreen?.({ key: 'myScreen', component: MyScreen });
 ```
 
@@ -104,7 +104,7 @@ Use live testing only when the oracle is insufficient (e.g., UI smoke tests, vis
 4. For DevTools access: launch with `--remote-debugging-port=9222`, then open `chrome://inspect` in Chrome
 5. **Delete `disable_steam` when done** — leaving it behind blocks Workshop mod loading
 
-## Known API Gaps (as of 0.6.54)
+## Known API Gaps (as of AFNM 0.7.x)
 
 These game behaviors have no official ModAPI interception point:
 
@@ -125,7 +125,7 @@ For method signatures and hook parameters, see `MODAPI_QUICK_REFERENCE.md`. For 
 
 - `CraftingTechnique.name` is a stable, non-localized identifier (not a display name)
 - Global flags are numeric only — store booleans as `0` / `1`
-- `fetch()` works normally on `0.6.50+` — no special CSP workarounds needed
+- `fetch()` works normally on AFNM `0.7.x` — no special CSP workarounds needed
 
 ### UI & Components
 
@@ -139,21 +139,21 @@ For method signatures and hook parameters, see `MODAPI_QUICK_REFERENCE.md`. For 
 
 - `onCreatePlayerCombatEntity` and `onCreatePlayerCraftingEntity` modify the player entity after creation, before the session begins
 - `onBeforeCraft` modifies recipe, recipe stats, or player crafting entity before crafting begins
-- `onModifyRecipeIngredients` dynamically alters recipe ingredients before UI and NPC encounters; runs before `onDeriveRecipeDifficulty` (added in `0.6.54`)
+- `onModifyRecipeIngredients` dynamically alters recipe ingredients before UI and NPC encounters; runs before `onDeriveRecipeDifficulty`
 - `onDeriveRecipeDifficulty` always includes `control` and `intensity` in the gameFlags parameter
-- Equipment upgrade/reforge hooks (`onDeriveEquipmentUpgradeRequirement`, `onCompleteEquipmentUpgrade`, `onDeriveEquipmentReforgeRequirement`, `onCompleteEquipmentReforge`) allow overriding costs and results (added in `0.6.54`)
-- Combat buffs: use `beforeTechniqueEffects`, `afterTechniqueEffects`, `onStackGainEffects`; legacy `onTechniqueEffects` + `afterTechnique` are no longer read as of 0.6.52
-- `registerKeybinding` registers custom keyboard shortcuts (Controls > Mods); as of `0.6.54-3`, `KeybindingDefinition.action` accepts plain strings (no cast needed); `useKeybinding` responds to them in screen contexts; `utils.getRegisteredKeybindValue(action)` reads the current bound key at runtime
+- Equipment upgrade/reforge hooks (`onDeriveEquipmentUpgradeRequirement`, `onCompleteEquipmentUpgrade`, `onDeriveEquipmentReforgeRequirement`, `onCompleteEquipmentReforge`) allow overriding costs and results
+- Combat buffs: use `beforeTechniqueEffects`, `afterTechniqueEffects`, `onStackGainEffects`; legacy `onTechniqueEffects` + `afterTechnique` are no longer read
+- `registerKeybinding` registers custom keyboard shortcuts (Controls > Mods); `KeybindingDefinition.action` accepts plain strings; `useKeybinding` responds to them in screen contexts; `utils.getRegisteredKeybindValue(action)` reads the current bound key at runtime
 - `utils.makeSave()`, `utils.loadSave()`, and `utils.listSaves()` are on `window.modAPI.utils` (no screen context required)
 - `actions.addToSectShop()` adds items directly to the Nine Mountain Sect Favour Exchange shop
-- `actions.triggerUIReset()` forces all UIRefreshWrapper components to unmount/remount (added in `0.6.54`)
+- `actions.triggerUIReset()` forces all UIRefreshWrapper components to unmount/remount
 
-### Screen/Options API (0.6.54+)
+### Screen/Options API
 
-- `utils.getHasSaveLoaded()` — check if a save is loaded (on `window.modAPI.utils`, added in `0.6.54-3`)
+- `utils.getHasSaveLoaded()` — check if a save is loaded (on `window.modAPI.utils`)
 - `api.useGameSettings()` — access game settings with getters/setters (e.g., `enableStancePreview`, `skipSeenDialogue`, `sexuality`)
-- `injectUI` `inject` helper now supports a `position` parameter: `'inside'` (default), `'before'`, `'after'`
+- `injectUI` generators receive `(api, inject)`; the helper supports placements such as `'after'`, `'before'`, `'appendChild'`, `'prependChild'`, and `'overlay'`
 
-### New Game Hook (0.6.54-3+)
+### New Game Hook
 
 - `hooks.onNewGame(intent => modifiedIntent)` — intercept all new game parameters (starting items, techniques, flags, money, player entity, etc.)

@@ -10,7 +10,7 @@ All methods are on `window.modAPI` unless noted otherwise.
 
 | Method | Returns | Notes |
 |--------|---------|-------|
-| `getGameStateSnapshot()` | `RootState \| null` | Read-only snapshot of entire game state |
+| `getGameStateSnapshot()` | `RootState` | Read-only snapshot of entire game state; default base state when no save is loaded |
 | `subscribe(callback)` | `() => void` | Returns unsubscribe function; fires on every Redux action |
 | `actions.getGlobalFlags()` | `Record<string, number>` | Cross-save numeric flags |
 | `actions.setGlobalFlag(key, value)` | `void` | Persist a numeric flag across all saves |
@@ -21,9 +21,10 @@ All methods are on `window.modAPI` unless noted otherwise.
 |--------|-----------|-------|
 | `actions.registerOptionsUI(component)` | `(ModOptionsFC) => void` | Settings panel in mod-loading dialog |
 | `actions.registerKeybinding(definition)` | `(KeybindingDefinition) => void` | Register custom keybinding; appears in Controls > Mods |
-| `actions.triggerUIReset()` | `() => void` | Force all UIRefreshWrapper-wrapped components to unmount/remount. Added in `0.6.54`. |
-| `injectUI(slotId, generator)` | `(string, InjectGenerator) => void` | Inject React content into a named game dialog/screen slot |
+| `actions.triggerUIReset()` | `() => void` | Force all UIRefreshWrapper-wrapped components to unmount/remount |
+| `injectUI(slotId, generator)` | `(slot, (api, inject) => void) => void` | Inject React content into a named game dialog/screen slot |
 | `addScreen(config)` | `({ key, component, music?, ambience? }) => void` | Register a full mod screen |
+| `actions.addTab(slot, config)` | `(ModTabSlot, ModTabConfig) => void` | Add a tab to supported built-in dialogs such as journal, techniques, inventory, or options |
 
 ### `injectUI` Slot Names and Positioning
 
@@ -31,11 +32,25 @@ All methods are on `window.modAPI` unless noted otherwise.
 - **Full screens:** the `ScreenType` value (e.g. `'combat'`, `'location'`, `'crafting'`, `'jadeCutting'`)
 - **Screen sub-slots:** `'combat-topBarPlayerInfo'`, `'crafting-craftingScreen'`, `'stoneCutting-jadeCuttingScreen'`
 
-The `inject` helper's 4th parameter (`position`) controls placement relative to the matched element (added in `0.6.54`):
+The `inject` helper's 3rd parameter controls placement relative to the matched element:
 
 ```
-inject(selector, content, mode?, position?)
-// position: 'inside' (default) | 'before' | 'after'
+inject(selectorOrElement, content, placement?)
+// placement: 'after' (default for selectors) | 'before' | 'appendChild' | 'prependChild' | 'overlay' | ...
+```
+
+Example:
+
+```tsx
+window.modAPI.injectUI('combat-victory', (api, inject) => {
+  inject(
+    '[aria-live="assertive"]',
+    <api.components.GameButton onClick={() => console.log('clicked')}>
+      My Mod Action
+    </api.components.GameButton>,
+    'after',
+  );
+});
 ```
 
 ## Screen/Options API (ModReduxAPI)
@@ -46,9 +61,26 @@ options panels, and injected UI generators.
 | Method | Notes |
 |--------|-------|
 | `api.actions.setModData(modName, key, data)` | Store save-scoped JSON-serializable mod data |
+| `api.actions.removeModData(modName, key)` | Remove one save-scoped mod-data key |
 | `api.actions.executeCraftingTechnique(technique)` | Execute a resolved crafting technique during an active crafting session |
 | `api.actions.previewCraftingTechnique(technique, state)` | Preview crafting technique results without dispatching Redux actions |
-| `api.useGameSettings()` | Returns `GameSettingsProps` — access to game settings with getters and setters. Added in `0.6.54`. |
+| `api.useGameSettings()` | Returns `GameSettingsProps` — access to game settings with getters and setters |
+
+```ts
+api.actions.setModData('myMod', 'draft', { seen: true });
+api.actions.removeModData('myMod', 'draft');
+```
+
+```tsx
+window.modAPI.actions.addTab('journal', {
+  id: 'myMod_notes',
+  title: 'Notes',
+  component: ({ screenAPI }) => {
+    const location = screenAPI.useSelector((s) => s.location.current);
+    return <div>Current location: {location}</div>;
+  },
+});
+```
 
 ## Lifecycle Hooks — Observation (no return value)
 
@@ -74,7 +106,17 @@ options panels, and injected UI generators.
 | `hooks.onGenerateExploreEvents` | `(locationId, events[], gameFlags)` | `LocationEvent[]` |
 | `hooks.onEventDropItem` | `(item, step, gameFlags)` | `ItemDesc` |
 
-## Lifecycle Hooks — Equipment Upgrade & Reforge (0.6.54+)
+Read-only combat hook pattern:
+
+```ts
+const unregister = window.modAPI.hooks.onCombatAfterStep((_step, ctx) => {
+  console.log('Round', ctx.roundNum, 'HP', ctx.playerState?.stats.hp);
+  return null;
+});
+// later: unregister()
+```
+
+## Lifecycle Hooks — Equipment Upgrade & Reforge
 
 These hooks intercept the equipment upgrade and reforge flows. Return `{ costItems?, resultItem? }` to override, or `undefined` to leave unchanged.
 
@@ -101,9 +143,9 @@ These hooks intercept the equipment upgrade and reforge flows. Return `{ costIte
 | Hook | Parameters | Returns | Warning |
 |------|-----------|---------|---------|
 | `hooks.onReduxAction` | `(actionType, stateBefore, stateAfter, payload)` | `RootState` | Runs inside the reducer after action payload interception. Keep fast, deterministic, no side-effects. Prefer `subscribe()` when possible. |
-| `hooks.onReduxActionPayload` | `(actionType, payload, stateBefore)` | `unknown \| null` | Runs before the reducer. Return a replacement payload, or `null` to drop the action. Keep fast, deterministic, no side-effects. `stateBefore` added in `0.6.54-3`. |
+| `hooks.onReduxActionPayload` | `(actionType, payload, stateBefore)` | `unknown \| null` | Runs before the reducer. Return a replacement payload, or `null` to drop the action. Keep fast, deterministic, no side-effects. |
 
-## Lifecycle Hooks — New Game (0.6.54-3+)
+## Lifecycle Hooks — New Game
 
 | Hook | Parameters | Returns |
 |------|-----------|---------|
@@ -128,7 +170,7 @@ interface NewGameIntent {
 
 ## Combat Buff Timing
 
-AFNM `0.6.52+` replaced the legacy `onTechniqueEffects` + `afterTechnique`
+AFNM replaced the legacy `onTechniqueEffects` + `afterTechnique`
 pattern for new combat buffs. Prefer these fields when authoring buff data:
 
 ```
@@ -199,7 +241,8 @@ actions.addCraftingMissionsToLocation(location, missions[])
 
 ```
 actions.addCrop(realm, crop)
-actions.addMineChamber(realm, progress, chamber)
+actions.addMineConfig(mineId, mineConfig)
+actions.addMineChamber(mineId, realm, progress, chamber)
 actions.addGuild(guild)
 actions.addEnchantment(enchantment)
 actions.addFallenStar(fallenStar)
@@ -237,7 +280,7 @@ actions.registerKeybinding({
 Registered keybindings appear in Controls settings under a "Mods" section.
 Call during mod initialization. Permanent for the session once registered.
 
-Note: As of `0.6.54-3`, `KeybindingDefinition.action` accepts plain strings — no cast needed for custom mod actions.
+`KeybindingDefinition.action` accepts plain strings — no cast needed for custom mod actions.
 
 Use `api.useKeybinding(priority, bindings)` in screen/UI contexts to respond to keys.
 
@@ -318,7 +361,7 @@ utils.tr(key, variables?, context?) // Deferred translation object for data defi
 
 ## Utility Functions — Toast Notifications
 
-Added in `0.6.53`. On `window.modAPI.utils`.
+On `window.modAPI.utils`.
 
 ```
 utils.showToast(message)                              // Default info toast, 3s timeout
@@ -361,7 +404,7 @@ utils.listSaves()          // List backup saves for the current character
 
 ```
 utils.getRegisteredKeybindValue(action)  // Returns current bound key string or undefined
-utils.getHasSaveLoaded()                 // Whether a save is currently loaded (0.6.54-3+)
+utils.getHasSaveLoaded()                 // Whether a save is currently loaded
 ```
 
 ## Utility Functions — Other
@@ -409,6 +452,6 @@ recipeConditionEffects   RecipeConditionEffect[]
 harmonyConfigs           Record<RecipeHarmonyType, HarmonyTypeConfig>
 itemTypeToHarmonyType    Record<ItemKind, RecipeHarmonyType>
 tutorials                { newGameTutorials, tutorialTriggers }
-mineChambers             Record<Realm, Record<RealmProgress, MineChamber[]>>
+mineConfigs              Record<string, MineConfig>
 uncutStones              Record<Realm, UncutStonePool | undefined>
 ```
