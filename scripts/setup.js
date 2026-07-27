@@ -7,6 +7,33 @@ const os = require('os');
 const REPO_ROOT = path.resolve(__dirname, '..');
 const UPLOADER_DIR = path.resolve(REPO_ROOT, '..', 'ModUploader-AFNM');
 
+function parseOptions(argv) {
+  const options = {};
+  for (let index = 0; index < argv.length; index += 1) {
+    const value = argv[index];
+    if (value === '--skip-uploader' || value === '--skip-verify') {
+      options[value.slice(2)] = true;
+    } else if (['--name', '--author', '--description'].includes(value)) {
+      const next = argv[index + 1];
+      if (!next) throw new Error(`Missing value for ${value}`);
+      options[value.slice(2)] = next;
+      index += 1;
+    }
+  }
+  return options;
+}
+
+const options = parseOptions(process.argv.slice(2));
+
+if (options.name || options.author || options.description) {
+  const packagePath = path.join(REPO_ROOT, 'package.json');
+  const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
+  if (options.name) packageJson.name = options.name;
+  if (options.author) packageJson.author = { name: options.author };
+  if (options.description) packageJson.description = options.description;
+  fs.writeFileSync(packagePath, `${JSON.stringify(packageJson, null, 2)}\n`);
+}
+
 function log(prefix, msg) {
   console.log(`[${prefix}] ${msg}`);
 }
@@ -70,7 +97,9 @@ log('ok', 'Dependencies installed');
 
 // Clone ModUploader-AFNM if missing
 console.log('');
-if (fs.existsSync(UPLOADER_DIR)) {
+if (options['skip-uploader']) {
+  log('--', 'Skipping uploader setup');
+} else if (fs.existsSync(UPLOADER_DIR)) {
   log('ok', `ModUploader-AFNM found at ${UPLOADER_DIR}`);
 } else {
   console.log('ModUploader-AFNM not found. Cloning...');
@@ -120,12 +149,14 @@ if (hasCommand('agent-browser')) {
 }
 
 // Verify build
-console.log('\n=== Verifying Build ===');
-const tcOk = runCommand('Typecheck', 'bun', ['run', 'typecheck'], REPO_ROOT);
-log(tcOk ? 'ok' : '!!', tcOk ? 'TypeScript passes' : 'TypeScript errors found');
-
-const buildOk = runCommand('Build', 'bun', ['run', 'build'], REPO_ROOT);
-log(buildOk ? 'ok' : '!!', buildOk ? 'Build succeeds' : 'Build failed');
+if (!options['skip-verify']) {
+  console.log('\n=== Verifying Build ===');
+  const tcOk = runCommand('Typecheck', 'bun', ['run', 'typecheck'], REPO_ROOT);
+  log(tcOk ? 'ok' : '!!', tcOk ? 'TypeScript passes' : 'TypeScript errors found');
+  const buildOk = runCommand('Build', 'bun', ['run', 'build'], REPO_ROOT);
+  log(buildOk ? 'ok' : '!!', buildOk ? 'Build succeeds' : 'Build failed');
+  if (!tcOk || !buildOk) process.exitCode = 1;
+}
 
 console.log('\n=== Setup Complete ===\n');
 console.log('Next steps:');

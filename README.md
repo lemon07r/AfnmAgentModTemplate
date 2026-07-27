@@ -1,6 +1,6 @@
 # AFNM Agent Mod Template
 
-A reusable starter repo for building *Ascend From Nine Mountains* mods with a workflow that matches the current AFNM `0.7.x` ModAPI types, installed-runtime validation, and Steam Workshop packaging.
+A reusable starter repo for building *Ascend From Nine Mountains* mods with a workflow that matches the AFNM `0.7.6` ModAPI types, installed-runtime validation, and Steam Workshop packaging.
 
 If you are handing this repo to an AI coding agent, have it read [AGENTS.md](./AGENTS.md) first.
 
@@ -104,18 +104,16 @@ Start in `src/modContent/index.ts` for gameplay logic and settings wiring.
 Build and validation:
 
 ```bash
-bun run typecheck
-bun run build
-bun run runtime:oracle
-
-# Or run all three in sequence:
 bun run release:validate
 ```
+
+The release gate also validates ZIP contents and builds a temporary generated
+sample project after a frozen Bun install.
 
 Useful runtime grep examples:
 
 ```bash
-bun run runtime:grep -- "getGameStateSnapshot|injectUI|onGenerateExploreEvents|registerOptionsUI"
+bun run runtime:grep -- "statFilter|techniqueBuffs|getCoreFormationAltarStats"
 ```
 
 Workshop upload:

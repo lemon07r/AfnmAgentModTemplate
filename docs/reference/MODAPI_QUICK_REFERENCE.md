@@ -14,6 +14,7 @@ All methods are on `window.modAPI` unless noted otherwise.
 | `subscribe(callback)` | `() => void` | Returns unsubscribe function; fires on every Redux action |
 | `actions.getGlobalFlags()` | `Record<string, number>` | Cross-save numeric flags |
 | `actions.setGlobalFlag(key, value)` | `void` | Persist a numeric flag across all saves |
+| `actions.startEvent(event)` | `boolean` | Starts the event only when no event is active; result reports whether it started |
 
 ## UI Integration
 
@@ -182,6 +183,26 @@ onRoundStartEffects
 onCombatStartEffects
 ```
 
+### Buff Interceptors
+
+`interceptBuffEffects` can match a specific buff, one or more combat stat
+categories, or either criterion:
+
+```ts
+interceptBuffEffects: [{
+  statFilter: ['power', 'defense'],
+  effects: [/* runs once per matching buff application */],
+  blockAmount: { value: 1, stat: undefined, eqn: 'incoming' },
+}]
+```
+
+- `buff?: Buff | string` matches by buff name.
+- `statFilter?: CombatStatistic[]` matches an incoming buff whose `stats` map
+  contributes a non-zero value to any listed stat.
+- When both are present, matching is OR, not AND. At least one must be present.
+- Effects run once with `intercepted` set to the handled stack count.
+- Omit `blockAmount` for a listener that reacts without consuming stacks.
+
 ## Content Registration — Items
 
 ```
@@ -235,7 +256,21 @@ actions.addExplorationEventsToLocation(location, events[])
 actions.addMapEventsToLocation(location, mapEvents[])
 actions.addMissionsToLocation(location, missions[])
 actions.addCraftingMissionsToLocation(location, missions[])
+actions.addExpeditionTiles(expeditionName, tiles[])
 ```
+
+### Core Formation Altar Helpers
+
+```
+actions.isRegisteredAltarLocation(locationName)
+actions.getLocationAltarReward(locationName)
+actions.getCoreFormationAltarStats(breakthrough)
+```
+
+`getCoreFormationAltarStats` aggregates the combat and crafting `Scaling`
+rewards from every location in `breakthrough.coreFormation.beatenAltars`. It
+also returns a per-altar contribution breakdown. Modded golden-core
+breakthroughs should call it from `dynamicStats` so they inherit altar rewards.
 
 ## Content Registration — Specialized
 
@@ -248,6 +283,8 @@ actions.addEnchantment(enchantment)
 actions.addFallenStar(fallenStar)
 actions.addRoom(room)
 actions.addMysticalRegionBlessing(blessing)
+actions.addMysticalRegionDefinition(definition)
+actions.addSoulShardDelve(delve)
 actions.addPuppetType(puppet)
 actions.addAlternativeStart(start)
 actions.addPlayerSprite(sprite)
@@ -261,8 +298,30 @@ actions.addRecipeToResearch(baseItem, recipe)
 actions.addResearchableRecipe(baseItem, recipe)
 actions.addUncutStone(realm, uncutStone)
 actions.addHarmonyType(harmonyType, config)
-actions.overrideItemTypeToHarmonyType(mapping)
 ```
+
+Harmony is player-selected for sublime crafts in AFNM 0.7.6; it is not inferred
+from item kind. Built-ins are `forge`, `alchemical`, `inscription`, `resonance`,
+`formless`, `enhancingEcho`, and `eccentricDecree`.
+
+`HarmonyTypeConfig` includes `name`, `description`, `shortDescription`,
+`processEffect`, optional `onBarChange`, `initEffect`, optional live `qiCostMultiplier` and
+`stabilityCostMultiplier`, `renderComponent`, icon/colour fields,
+`complexityMultiplier`, optional `startingHarmony`, `unlockFlag`, and
+`statTable`.
+
+Persisted enhanced equipment uses:
+
+```ts
+interface ItemDesc {
+  name: string;
+  dropQuality?: number; // transient drop input
+  harmonyAugment?: { type: RecipeHarmonyType; quality: number };
+}
+```
+
+Resolve descriptors through `utils.getFullItem(desc)` to apply enchantments,
+harmony stat grants, and harmony field upgrades.
 
 ## Content Registration — Keybindings
 
@@ -446,12 +505,33 @@ alternativeStarts        AlternativeStart[]
 backgrounds              { birth, child, teen }
 techniqueBuffs           { blood, blossom, celestial, cloud, fist, weapon }
 mysticalRegionBlessings  Blessing[]
+mysticalRegionDefinitions Record<string, MysticalRegionDefinition>
 dualCultivationTechniques IntimateTechnique[]
 researchableMap          Record<string, RecipeItem[]>
 recipeConditionEffects   RecipeConditionEffect[]
 harmonyConfigs           Record<RecipeHarmonyType, HarmonyTypeConfig>
-itemTypeToHarmonyType    Record<ItemKind, RecipeHarmonyType>
+buffs                    Record<string, Buff>
+expeditionTiles          Record<string, ExpeditionTiles[]>
+soulShardDelves          Record<string, SoulShardDelveConfig>
 tutorials                { newGameTutorials, tutorialTriggers }
 mineConfigs              Record<string, MineConfig>
 uncutStones              Record<Realm, UncutStonePool | undefined>
 ```
+
+## 0.7.6 Snapshot State
+
+- `research.queue` holds material, remaining/discovered recipes, progress, and
+  optional `materialReturned`; `research.glyphs` holds harmony glyphs that
+  multiply research speed.
+- `soulShardDelve` holds `delveKey`, optional `currentRun` (ordered nodes,
+  room/stage indexes, qither, blessings/curses/rewards), and per-delve
+  `progression`. There is no floor/max-floor pair.
+- Player formation/delve layouts are named persisted layouts with placements;
+  use their typed `current*Layout` / `stored*Layouts` fields.
+- `tournament` keeps source step, candidate fighters, previous rounds, and the
+  current round; tournament completion hooks receive `victory`, `second`, or
+  `defeat`.
+- Explore repeat bookkeeping is
+  `location.currentLocationLastEvent` plus
+  `location.currentLocationLastEventCount`. Authored events can set
+  `repeatPenaltyMonths`.

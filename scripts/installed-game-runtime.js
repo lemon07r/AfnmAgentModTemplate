@@ -106,10 +106,18 @@ function extractSummary(extractDir, gameDir, asarPath) {
   const packageJsonPath = path.join(extractDir, 'package.json');
   const mainIndexPath = path.join(extractDir, 'dist-electron', 'main', 'index.js');
   const gameJsPath = path.join(extractDir, 'dist-electron', 'Game.js');
+  const dynamicImportHelperPath = path.join(
+    extractDir,
+    'dist-electron',
+    '_rolldown_dynamic_import_helper.js',
+  );
 
   const packageJson = readJson(packageJsonPath);
   const mainIndex = readText(mainIndexPath);
   const gameJs = readText(gameJsPath);
+  const rendererJs = fs.existsSync(dynamicImportHelperPath)
+    ? `${gameJs}\n${readText(dynamicImportHelperPath)}`
+    : gameJs;
 
   const buildVersion = mainIndex.match(/const ce="([^"]+)"/)?.[1] ?? null;
 
@@ -159,6 +167,26 @@ function extractSummary(extractDir, gameDir, asarPath) {
         hasToken(gameJs, 'beforeTechniqueEffects') &&
         hasToken(gameJs, 'afterTechniqueEffects') &&
         hasToken(gameJs, 'onStackGainEffects'),
+      hasHarmonyConfigs: hasToken(gameJs, 'harmonyConfigs'),
+      hasRemovedItemHarmonyMapping: !hasToken(gameJs, 'itemTypeToHarmonyType'),
+      hasGetFullItemHarmonyAugment:
+        hasToken(gameJs, 'getFullItem') && hasToken(gameJs, 'harmonyAugment'),
+      hasCraftingAutoUse: hasToken(gameJs, 'currentCraftingAutoUseLoadout'),
+      hasResearchState:
+        hasToken(gameJs, 'research') && hasToken(gameJs, 'glyphs'),
+      hasSoulShardDelveState:
+        hasToken(gameJs, 'soulShardDelve') && hasToken(gameJs, 'currentRun'),
+      hasExpeditionTiles: hasToken(gameJs, 'expeditionTiles'),
+      hasMysticalRegionDefinitions: hasToken(gameJs, 'mysticalRegionDefinitions'),
+      hasBuffStatFilter:
+        hasToken(rendererJs, 'interceptBuffEffects') &&
+        hasToken(rendererJs, 'statFilter'),
+      hasGlobalBuffRegistry:
+        /techniques:[^,]{1,100},buffs:[^,]{1,100},techniqueBuffs:/.test(gameJs),
+      hasCoreFormationAltarStats: hasToken(
+        gameJs,
+        'getCoreFormationAltarStats',
+      ),
     },
   };
 }

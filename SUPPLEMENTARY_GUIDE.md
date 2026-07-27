@@ -8,7 +8,8 @@ It distills the patterns learned while shipping:
 - `Lucky All Around`
 - `ElderGPT Spirit Ring`
 
-Unless noted otherwise, the runtime statements below were rechecked against `afnm-types@0.6.54` and confirmed by the upstream developer.
+Unless noted otherwise, the runtime statements below were rechecked against
+`afnm-types@0.7.6` and installed AFNM `0.7.6-7c586da`.
 
 ## 1. Pick The Right Mod Shape First
 
@@ -172,7 +173,7 @@ That means:
 
 Use `onReduxActionPayload` only when you need to modify or drop an action before the reducer sees it. Use `onReduxAction` only when you need post-reducer state interception. If `subscribe()` can solve the problem, prefer that.
 
-### Combat buff timing changed in 0.6.52
+### Current combat buff timing
 
 New combat buffs should use the explicit timing fields:
 
@@ -183,11 +184,23 @@ New combat buffs should use the explicit timing fields:
 - `onRoundStartEffects`
 - `onCombatStartEffects`
 
-Do not author new buffs with the legacy `onTechniqueEffects` + `afterTechnique` shape. Those fields are no longer read as of 0.6.52. All six timing fields listed above are confirmed implemented in the runtime and typed in `afnm-types`.
+Do not author new buffs with the legacy `onTechniqueEffects` +
+`afterTechnique` shape. All six timing fields listed above are confirmed in the
+0.7.6 runtime and types.
+
+Buff interceptors can target a named `buff`, a `statFilter` array, or either.
+Stat filters match non-zero incoming buff contributions for any listed combat
+stat. Use `gameData.buffs` when a mod needs to inspect the complete combat-buff
+registry rather than the school-focused `techniqueBuffs` subset.
+
+For modded golden-core breakthroughs, call
+`actions.getCoreFormationAltarStats(breakthrough)` from `dynamicStats`. This
+keeps their combat and crafting rewards aligned with every beaten altar,
+including registered mod locations.
 
 ### Networking is no longer the blocker
 
-On `0.6.50+`, normal `fetch()` works from mod code. The real risks are now:
+On `0.7.6`, normal `fetch()` works from mod code. The real risks are:
 
 - offline players
 - CORS/server policy on the target service
@@ -245,6 +258,10 @@ These matter even if your new mod is not CraftBuddy-sized, because they explain 
 
 Harmony-specific notes:
 
+- Harmony is player-selected for sublime crafts. Never infer it from item kind;
+  read `recipeStats.harmonyType`.
+- Resolve equipped descriptors with `utils.getFullItem()` so enchantments and
+  `harmonyAugment` bonuses are applied.
 - Inscribed Patterns has a catastrophic stack-halving penalty on invalid-color actions.
 - Spiritual Resonance can retarget after a repeated new-color streak; the state machine is not just “current color plus progress”.
 

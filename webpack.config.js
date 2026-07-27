@@ -70,7 +70,7 @@ module.exports = {
   },
   plugins: [
     new webpack.DefinePlugin({
-      MOD_METADATA: JSON.stringify(buildModMetadata()),
+      MOD_METADATA: `(${JSON.stringify(buildModMetadata())})`,
     }),
   ],
 };
