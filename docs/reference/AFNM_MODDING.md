@@ -104,7 +104,7 @@ Use live testing only when the oracle is insufficient (e.g., UI smoke tests, vis
 4. For DevTools access: launch with `--remote-debugging-port=9222`, then open `chrome://inspect` in Chrome
 5. **Delete `disable_steam` when done** — leaving it behind blocks Workshop mod loading
 
-## Known API Gaps (as of AFNM 0.7.x)
+## Known API Gaps (as of AFNM 0.7.6)
 
 These game behaviors have no official ModAPI interception point:
 
@@ -126,6 +126,12 @@ For method signatures and hook parameters, see `MODAPI_QUICK_REFERENCE.md`. For 
 - `CraftingTechnique.name` is a stable, non-localized identifier (not a display name)
 - Global flags are numeric only — store booleans as `0` / `1`
 - `fetch()` works normally on AFNM `0.7.x` — no special CSP workarounds needed
+- Harmony is selected by the player for sublime crafts; the removed
+  item-kind-to-harmony mapping must not be used.
+- `ItemDesc.dropQuality` is transient drop input; persisted equipment bonuses
+  use `harmonyAugment`, resolved by `utils.getFullItem()`.
+- `gameData.buffs` is the complete combat-buff registry, including buffs
+  reached from techniques, items, monsters, blessings, and nested effects.
 
 ### UI & Components
 
@@ -143,6 +149,10 @@ For method signatures and hook parameters, see `MODAPI_QUICK_REFERENCE.md`. For 
 - `onDeriveRecipeDifficulty` always includes `control` and `intensity` in the gameFlags parameter
 - Equipment upgrade/reforge hooks (`onDeriveEquipmentUpgradeRequirement`, `onCompleteEquipmentUpgrade`, `onDeriveEquipmentReforgeRequirement`, `onCompleteEquipmentReforge`) allow overriding costs and results
 - Combat buffs: use `beforeTechniqueEffects`, `afterTechniqueEffects`, `onStackGainEffects`; legacy `onTechniqueEffects` + `afterTechnique` are no longer read
+- Buff interceptors can match `buff`, `statFilter`, or either; `statFilter`
+  reacts to non-zero contributions in any listed combat stat category.
+- `actions.getCoreFormationAltarStats(breakthrough)` aggregates the rewards
+  from the player's beaten Core Formation altars for modded golden cores.
 - `registerKeybinding` registers custom keyboard shortcuts (Controls > Mods); `KeybindingDefinition.action` accepts plain strings; `useKeybinding` responds to them in screen contexts; `utils.getRegisteredKeybindValue(action)` reads the current bound key at runtime
 - `utils.makeSave()`, `utils.loadSave()`, and `utils.listSaves()` are on `window.modAPI.utils` (no screen context required)
 - `actions.addToSectShop()` adds items directly to the Nine Mountain Sect Favour Exchange shop

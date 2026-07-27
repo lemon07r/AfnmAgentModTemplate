@@ -38,7 +38,8 @@ Agents have standing permission to edit, correct, prune, or improve any doc or `
 - `bun run extract-translations`
 - `bun run typecheck`
 - `bun run build`
-- `bun run release:validate` — typecheck + build + runtime:oracle in one step
+- `bun run release:validate` — typecheck, build/ZIP validation, runtime oracle,
+  and a generated-project smoke test
 - `bun run runtime:oracle`
 - `bun run runtime:extract`
 - `bun run runtime:grep -- "<pattern>"`
@@ -69,6 +70,8 @@ Code comments and docstrings can save future agents significant time. Add them w
 - Always use optional chaining on `window.modAPI` access: `window.modAPI?.hooks?.onLocationEnter?.()`
 - React, ReactDOM, MUI, and MUI Icons are externalized (provided by game runtime) — never bundle them
 - Prefer importing game types from the `afnm-types` package
+- Import `afnm-types` with `import type` in runtime modules; build metadata is
+  the single source for `gameVersion`.
 - Run `bun run typecheck && bun run build` before committing
 - When docs and runtime disagree, trust the installed runtime: `bun run runtime:grep -- "<symbol>"`
 - Use commit prefixes: `feat:`, `fix:`, `docs:`, `perf:`, `chore:`

@@ -35,6 +35,12 @@ When working with AFNM ModAPI hooks, actions, or utilities, consult `docs/refere
 - `utils.getHasSaveLoaded()` — check if a save is loaded (on `window.modAPI.utils`)
 - `api.useGameSettings()` — access game settings with getters/setters in screen contexts
 - `actions.triggerUIReset()` forces a full component remount
+- `gameData.buffs` is the complete combat-buff registry; `techniqueBuffs` is
+  only the school-focused subset
+- Combat `interceptBuffEffects` entries can use `buff`, `statFilter`, or both
+  (OR matching)
+- `actions.getCoreFormationAltarStats(breakthrough)` aggregates every beaten
+  Core Formation altar for modded golden-core `dynamicStats`
 - `hooks.onNewGame(intent => modifiedIntent)` — override new game parameters (items, flags, money, player, etc.)
 - `onReduxActionPayload` now receives `stateBefore` as 3rd parameter
 - `injectUI` inject helper supports `position` parameter: `'inside'`, `'before'`, `'after'`

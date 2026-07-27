@@ -75,8 +75,11 @@ Use the `afnm-types` package for all game type imports:
 
 ```typescript
 import type { ModAPI, ModOptionsFC, RootState, CombatEntity } from 'afnm-types';
-import { GAME_VERSION } from 'afnm-types';
 ```
+
+Do not import `GAME_VERSION` in runtime source. `scripts/mod-package.js` reads
+the installed package at build time and Webpack injects the complete
+`MOD_METADATA`; this keeps the `afnm-types` JavaScript surface out of mod bundles.
 
 For APIs whose helper types are not exported directly, infer from the
 available method instead of importing private package paths:
