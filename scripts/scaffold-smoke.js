@@ -39,6 +39,7 @@ try {
     'Smoke Test',
     '--description',
     'Generated scaffold smoke test',
+    '--skip-install',
     '--skip-uploader',
     '--skip-verify',
   ]);

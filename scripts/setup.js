@@ -11,7 +11,11 @@ function parseOptions(argv) {
   const options = {};
   for (let index = 0; index < argv.length; index += 1) {
     const value = argv[index];
-    if (value === '--skip-uploader' || value === '--skip-verify') {
+    if (
+      value === '--skip-install' ||
+      value === '--skip-uploader' ||
+      value === '--skip-verify'
+    ) {
       options[value.slice(2)] = true;
     } else if (['--name', '--author', '--description'].includes(value)) {
       const next = argv[index + 1];
@@ -88,12 +92,16 @@ if (missing.length > 0) {
   process.exit(1);
 }
 
-// Install dependencies
-if (!runCommand('Install dependencies', 'bun', ['install'], REPO_ROOT)) {
-  log('!!', 'Dependency installation failed');
-  process.exit(1);
+// Install dependencies unless the caller is deliberately testing a frozen install.
+if (options['skip-install']) {
+  log('--', 'Skipping dependency installation');
+} else {
+  if (!runCommand('Install dependencies', 'bun', ['install'], REPO_ROOT)) {
+    log('!!', 'Dependency installation failed');
+    process.exit(1);
+  }
+  log('ok', 'Dependencies installed');
 }
-log('ok', 'Dependencies installed');
 
 // Clone ModUploader-AFNM if missing
 console.log('');
