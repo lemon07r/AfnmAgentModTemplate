@@ -31,7 +31,7 @@ When working with AFNM ModAPI hooks, actions, or utilities, consult `docs/refere
 - For keybinding registration, use `actions.registerKeybinding()`; `action` accepts plain strings (no cast needed)
 - Use `utils.getRegisteredKeybindValue(action)` to read the current bound key at runtime
 - Toast notifications are on `window.modAPI.utils.showToast()`, not the screen API
-- Tooltip utilities and components are on `ModReduxAPI` — available in screen, options, and injectUI contexts only
+- Tooltip utilities and components are on both root `ModAPI` and screen-context `ModReduxAPI`; `components.tooltips` and `components.recipes` expose the built-in variants
 - `utils.getHasSaveLoaded()` — check if a save is loaded (on `window.modAPI.utils`)
 - `api.useGameSettings()` — access game settings with getters/setters in screen contexts
 - `actions.triggerUIReset()` forces a full component remount
@@ -43,5 +43,5 @@ When working with AFNM ModAPI hooks, actions, or utilities, consult `docs/refere
   Core Formation altar for modded golden-core `dynamicStats`
 - `hooks.onNewGame(intent => modifiedIntent)` — override new game parameters (items, flags, money, player, etc.)
 - `onReduxActionPayload` now receives `stateBefore` as 3rd parameter
-- `injectUI` inject helper supports `position` parameter: `'inside'`, `'before'`, `'after'`
+- `injectUI` uses a `placement` parameter such as `'appendChild'`, `'prependChild'`, `'before'`, `'after'`, or `'overlay'`; verify selectors after the 0.7.17 controller/DOM changes
 - Prefer the official API fallback order from `AGENTS.md` § Modding Rules

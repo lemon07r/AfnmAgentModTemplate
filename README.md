@@ -1,6 +1,6 @@
 # AFNM Agent Mod Template
 
-A reusable starter repo for building *Ascend From Nine Mountains* mods with a workflow that matches the AFNM `0.7.6` ModAPI types, installed-runtime validation, and Steam Workshop packaging.
+A reusable starter repo for building *Ascend From Nine Mountains* mods with a workflow that matches the AFNM `0.7.17` ModAPI types, installed-runtime validation, and Steam Workshop packaging.
 
 If you are handing this repo to an AI coding agent, have it read [AGENTS.md](./AGENTS.md) first.
 
@@ -74,6 +74,8 @@ Start in `src/modContent/index.ts` for gameplay logic and settings wiring.
   Real runtime entrypoint. Start here for gameplay logic, hooks, settings, and UI wiring.
 - `src/global.d.ts`
   Shared typings for `MOD_METADATA`, `window.modAPI`, runtime React, and the debug registry.
+- `src/modApi0717.contract.ts`
+  Compile-only checks for the documented 0.7.17 API surface; not bundled.
 - `scripts/mod-package.js`
   Single source of truth for metadata and `gameVersion` resolution.
 - `scripts/installed-game-runtime.js`
@@ -109,6 +111,10 @@ bun run release:validate
 
 The release gate also validates ZIP contents and builds a temporary generated
 sample project after a frozen Bun install.
+
+The runtime oracle selectively extracts code (not media) from large game archives
+into `~/.local/tmp/afnm-template/installed-game-runtime/`. For scratch files in
+the same home-local area, run validation with `TMPDIR="$HOME/.local/tmp"` on Unix.
 
 Useful runtime grep examples:
 

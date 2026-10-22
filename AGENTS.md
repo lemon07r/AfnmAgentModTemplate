@@ -2,6 +2,10 @@
 
 This template is the default starting point for new *Ascend From Nine Mountains* mods. Keep it lean, ModAPI-first, and easy for later agents to extend.
 
+Targets `afnm-types@0.7.17` / AFNM 0.7.17. `src/modApi0717.contract.ts` checks the
+documented API shapes at compile time and is not bundled. Use the package's
+`.d.ts` files for signatures; inspect the installed runtime for behavior.
+
 ## Read Order
 
 1. This file — project layout, commands, rules
@@ -97,6 +101,8 @@ Code comments and docstrings can save future agents significant time. Add them w
   3. `bun run runtime:oracle`
   4. `bun run runtime:grep -- "<symbol-you-care-about>"`
 - Use live UI/manual testing only when the installed-runtime oracle is insufficient.
+- On Unix, keep validation scratch under `$HOME/.local/tmp` by setting
+  `TMPDIR="$HOME/.local/tmp"`; the oracle also caches its selective extraction there.
 - If you launch the real client directly, create `disable_steam` beside the executable first and delete it when done. Leaving it behind will block Workshop mod loading.
 - Prefer the platform's direct executable or native launcher rather than bouncing back through the Steam UI when you only need a smoke test.
 

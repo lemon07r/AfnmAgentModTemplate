@@ -8,8 +8,9 @@ It distills the patterns learned while shipping:
 - `Lucky All Around`
 - `ElderGPT Spirit Ring`
 
-Unless noted otherwise, the runtime statements below were rechecked against
-`afnm-types@0.7.6` and installed AFNM `0.7.6-7c586da`.
+Targets `afnm-types@0.7.17`; the installed-runtime oracle is checked against AFNM
+`0.7.17-d8ae6ce`. Use the declarations for API shapes and the oracle for runtime
+behavior.
 
 ## 1. Pick The Right Mod Shape First
 
@@ -45,7 +46,7 @@ Custom screens, stat viewers, inventory helpers, map tools, crafting assistants,
 
 Default stack:
 
-- `addScreen()` for full-page interfaces
+- `actions.addScreen()` for full-page interfaces
 - `injectUI()` for small affordances in existing dialogs (with screen sub-slots like `'combat-topBarPlayerInfo'`, `'crafting-craftingScreen'`, `'stoneCutting-jadeCuttingScreen'`)
 - `useSelector()`, `useGameFlags()`, and `useGameSettings()` inside screen components
 - `useKeybinding()` for keyboard shortcuts in screen contexts
@@ -91,14 +92,14 @@ Default stack:
 
 ### Cosmetic / personalization
 
-Player sprites, alternative starts, new backgrounds, custom rooms, new music or sound effects.
+Player sprites, alternative starts, childhood backgrounds, starting treasures, music, sound effects, and combat VFX.
 
 Default stack:
 
 - `actions.addPlayerSprite()`, `actions.addAlternativeStart()`
-- `actions.addBirthBackground()`, `actions.addChildBackground()`, `actions.addTeenBackground()`
-- `actions.addRoom()`, `actions.addMusic()`, `actions.addSfx()`
-- `utils.generateSkipTutorialFlags()` for alternative starts that skip tutorials
+- `actions.addChildBackground(background, glyph?)`, `actions.addStartingTreasure()`
+- `actions.addMusic()`, `actions.addSfx()`, `actions.addCombatVfx()`
+- Birth/teen background registration is deprecated; prefer childhoods and treasures
 
 ### Read-only advisor or overlay
 
@@ -186,7 +187,7 @@ New combat buffs should use the explicit timing fields:
 
 Do not author new buffs with the legacy `onTechniqueEffects` +
 `afterTechnique` shape. All six timing fields listed above are confirmed in the
-0.7.6 runtime and types.
+0.7.17 runtime and types.
 
 Buff interceptors can target a named `buff`, a `statFilter` array, or either.
 Stat filters match non-zero incoming buff contributions for any listed combat
@@ -200,7 +201,8 @@ including registered mod locations.
 
 ### Networking is no longer the blocker
 
-On `0.7.6`, normal `fetch()` works from mod code. The real risks are:
+The installed `0.7.17` main bundle has no CSP restriction on external requests;
+normal `fetch()` needs no CSP workaround. The real risks are:
 
 - offline players
 - CORS/server policy on the target service
@@ -236,6 +238,9 @@ Use `injectUI()` when:
 - you need a lightweight CTA, button, or readout
 - the game already has a natural host slot
 
+Recheck selectors in the current client: 0.7.17 added controller support and
+changed the DOM, so older injection examples are not compatibility guarantees.
+
 Use a persistent overlay when:
 
 - the affordance must survive location, combat, event, and crafting transitions
@@ -255,6 +260,8 @@ These matter even if your new mod is not CraftBuddy-sized, because they explain 
 - Static `poolcost`, `stabilitycost`, and `successchance` masteries are already baked into live techniques; double-applying them is a real bug.
 - `noQiCost` is a real field in current runtime payloads.
 - `craftingTeamUpOverride` companion buffs also matter in current payloads.
+- Use the four cost reduction/penalty stat keys listed in the quick reference;
+  do not confuse them with the harmony cost-multiplier callbacks.
 
 Harmony-specific notes:
 

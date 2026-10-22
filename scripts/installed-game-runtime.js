@@ -61,11 +61,11 @@ function getCacheFingerprint(asarPath) {
 }
 
 function getExtractDir(fingerprint) {
-  return path.join(ROOT, 'tmp', 'installed-game-runtime', fingerprint);
+  return path.join(os.homedir(), '.local', 'tmp', 'afnm-template', 'installed-game-runtime', fingerprint);
 }
 
 function extractRuntime(asarPath, extractDir) {
-  const marker = path.join(extractDir, 'dist-electron', 'main', 'index.js');
+  const marker = path.join(extractDir, '.extracted');
   if (fs.existsSync(marker)) {
     return extractDir;
   }
@@ -73,19 +73,25 @@ function extractRuntime(asarPath, extractDir) {
   fs.rmSync(extractDir, { recursive: true, force: true });
   fs.mkdirSync(extractDir, { recursive: true });
 
-  const result = childProcess.spawnSync(
-    'npx',
-    ['-y', '@electron/asar', 'extract', asarPath, extractDir],
-    {
-      stdio: 'inherit',
-      cwd: ROOT,
-    },
-  );
-
-  if (result.status !== 0) {
-    fail(`Failed to extract installed game runtime from ${asarPath}`);
+  // Full extraction overflows on the >2 GB archive. Read only runtime files,
+  // leaving large media assets in the archive.
+  const asar = require('@electron/asar');
+  for (const listed of asar.listPackage(asarPath)) {
+    // listPackage returns native separators (backslashes on Windows).
+    const entry = listed.replace(/\\/g, '/');
+    if (entry !== '/package.json' && !entry.startsWith('/dist-electron/')) continue;
+    if (/\.(png|webp|jpg|jpeg|ogg|mp3|wav|webm|otf|ttf|ktx|ktx2|basis|glb|bin)$/i.test(entry)) continue;
+    const rel = entry.replace(/^\//, '');
+    if (asar.statFile(asarPath, rel).files) continue;
+    const out = path.join(extractDir, rel);
+    fs.mkdirSync(path.dirname(out), { recursive: true });
+    fs.writeFileSync(out, asar.extractFile(asarPath, rel));
   }
 
+  for (const required of ['package.json', 'dist-electron/main/index.js', 'dist-electron/Game.js']) {
+    ensureExists(path.join(extractDir, required), 'Required extracted runtime file');
+  }
+  fs.writeFileSync(marker, '');
   return extractDir;
 }
 
@@ -119,7 +125,8 @@ function extractSummary(extractDir, gameDir, asarPath) {
     ? `${gameJs}\n${readText(dynamicImportHelperPath)}`
     : gameJs;
 
-  const buildVersion = mainIndex.match(/const ce="([^"]+)"/)?.[1] ?? null;
+  const buildVersion =
+    mainIndex.match(/`(\d+\.\d+\.\d+-[0-9a-f]{7,})`/)?.[1] ?? null;
 
   return {
     gameDir,
@@ -128,7 +135,7 @@ function extractSummary(extractDir, gameDir, asarPath) {
     gameVersion: packageJson.version ?? null,
     buildVersion,
     runtimeBehavior: {
-      writesRelativeSettingsJson: mainIndex.includes('k="./settings.json"'),
+      writesRelativeSettingsJson: /["'`]\.\/settings\.json["'`]/.test(mainIndex),
       supportsDisableSteamSentinel: mainIndex.includes('disable_steam'),
       restartsThroughSteamByDefault: mainIndex.includes(
         'Restarting app through Steam...',
@@ -182,7 +189,7 @@ function extractSummary(extractDir, gameDir, asarPath) {
         hasToken(rendererJs, 'interceptBuffEffects') &&
         hasToken(rendererJs, 'statFilter'),
       hasGlobalBuffRegistry:
-        /techniques:[^,]{1,100},buffs:[^,]{1,100},techniqueBuffs:/.test(gameJs),
+        /techniques:[^,]{1,100},combatVfx:[^,]{1,100},buffs:[^,]{1,100},techniqueBuffs:/.test(gameJs),
       hasCoreFormationAltarStats: hasToken(
         gameJs,
         'getCoreFormationAltarStats',

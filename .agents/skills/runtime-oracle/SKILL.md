@@ -32,7 +32,7 @@ bun run runtime:grep -- "statFilter|techniqueBuffs|getCoreFormationAltarStats"
 # Check launcher behavior
 bun run runtime:grep -- "disable_steam|Restarting app through Steam"
 
-# Extract the full bundle for manual inspection
+# Extract runtime code (excluding media) for manual inspection
 bun run runtime:extract
 ```
 
@@ -43,5 +43,6 @@ bun run runtime:extract
 - Buff-interceptor execution is emitted in a dynamically imported renderer
   chunk; the summary scans it as well as `Game.js`.
 - Cache is fingerprinted by asar file size + mtime. It auto-invalidates on game updates.
+- Selective extraction uses the local `@electron/asar` dependency and caches under `~/.local/tmp/afnm-template/installed-game-runtime/`; it does not unpack the full >2 GB archive.
 - Override game path with `AFNM_GAME_DIR="/path/to/game" bun run runtime:oracle` if auto-detection fails.
 - Do NOT launch the full game just to confirm a symbol exists. The oracle is faster and non-disruptive.

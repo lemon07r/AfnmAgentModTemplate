@@ -1,6 +1,6 @@
 # ModAPI Quick Reference
 
-Compact cheat sheet for the AFNM ModAPI surface. For full documentation, see the [upstream docs](https://lyeeedar.github.io/AfnmExampleMod/).
+Compact cheat sheet for `afnm-types@0.7.17`. The package's `.d.ts` files define the signatures below; see also the [upstream docs](https://lyeeedar.github.io/AfnmExampleMod/).
 
 All methods are on `window.modAPI` unless noted otherwise.
 
@@ -24,7 +24,7 @@ All methods are on `window.modAPI` unless noted otherwise.
 | `actions.registerKeybinding(definition)` | `(KeybindingDefinition) => void` | Register custom keybinding; appears in Controls > Mods |
 | `actions.triggerUIReset()` | `() => void` | Force all UIRefreshWrapper-wrapped components to unmount/remount |
 | `injectUI(slotId, generator)` | `(slot, (api, inject) => void) => void` | Inject React content into a named game dialog/screen slot |
-| `addScreen(config)` | `({ key, component, music?, ambience? }) => void` | Register a full mod screen |
+| `actions.addScreen(config)` | `({ key, component, music?, ambience? }) => void` | Register a full mod screen |
 | `actions.addTab(slot, config)` | `(ModTabSlot, ModTabConfig) => void` | Add a tab to supported built-in dialogs such as journal, techniques, inventory, or options |
 
 ### `injectUI` Slot Names and Positioning
@@ -32,6 +32,10 @@ All methods are on `window.modAPI` unless noted otherwise.
 - **Dialogs:** the dialog's DOM `id` (e.g. `'combat-victory'`)
 - **Full screens:** the `ScreenType` value (e.g. `'combat'`, `'location'`, `'crafting'`, `'jadeCutting'`)
 - **Screen sub-slots:** `'combat-topBarPlayerInfo'`, `'crafting-craftingScreen'`, `'stoneCutting-jadeCuttingScreen'`
+
+AFNM 0.7.17 added controller support and changed the DOM. Verify slot names and
+selectors against the current client before relying on an injection; the example
+below is not a selector compatibility guarantee.
 
 The `inject` helper's 3rd parameter controls placement relative to the matched element:
 
@@ -218,21 +222,31 @@ actions.addItemToFallenStar(item, realm)
 
 ```
 actions.addCharacter(character)
-actions.addBirthBackground(background)
-actions.addChildBackground(background)
-actions.addTeenBackground(background)
+actions.addChildBackground(background, glyph?)
+actions.addStartingTreasure(treasure)
 ```
+
+`StartingTreasure` extends `Background` with required `items: Item[]`; register
+those items separately with `addItem`. `addBirthBackground` and
+`addTeenBackground` still exist but are deprecated. The latter converts legacy
+teen backgrounds into treasure collections.
 
 ## Content Registration — Cultivation
 
 ```
 actions.addBreakthrough(realm, breakthrough)
 actions.addTechnique(technique)
+actions.addCombatVfx(definition)
 actions.addManual(manual)
 actions.addCraftingTechnique(technique)
 actions.addDestiny(destiny)
 actions.addDualCultivationTechnique(technique)
 ```
+
+`Technique.type` is `'origin' | TechniqueElement | RealTechniqueElement[]`;
+hybrids use an array, not `secondaryType`. Arrays exclude the neutral `'none'`
+school. `addCombatVfx(TechniqueVfx)` registers presentation effects and default
+mapping rules; `Technique.vfx` can override them (`[]` disables them).
 
 ## Content Registration — World
 
@@ -244,7 +258,14 @@ actions.addQuest(quest)
 actions.addQuestToRequestBoard(quest, realm, rarity, condition, location)
 actions.addCalendarEvent(event)
 actions.addTriggeredEvent(event)
+actions.addTournamentConfig(config)
+actions.addTournamentReward(tournamentId, tier)
 ```
+
+Tournament configs have stable `id`s (duplicates throw), a `roster()` factory,
+realm, participant buffs, optional placement rewards and combat/crafting
+`roundKinds`. Reward tiers use `placementMin`, required `items`, and optional
+`money` / `favour`; qualifying tiers are cumulative.
 
 ## Content Registration — Location Modification
 
@@ -281,7 +302,6 @@ actions.addMineChamber(mineId, realm, progress, chamber)
 actions.addGuild(guild)
 actions.addEnchantment(enchantment)
 actions.addFallenStar(fallenStar)
-actions.addRoom(room)
 actions.addMysticalRegionBlessing(blessing)
 actions.addMysticalRegionDefinition(definition)
 actions.addSoulShardDelve(delve)
@@ -300,15 +320,21 @@ actions.addUncutStone(realm, uncutStone)
 actions.addHarmonyType(harmonyType, config)
 ```
 
-Harmony is player-selected for sublime crafts in AFNM 0.7.6; it is not inferred
+Harmony is player-selected for sublime crafts in AFNM 0.7.17; it is not inferred
 from item kind. Built-ins are `forge`, `alchemical`, `inscription`, `resonance`,
-`formless`, `enhancingEcho`, and `eccentricDecree`.
+`formless`, `enhancingEcho`, `eccentricDecree`, `captivatingCadence`, and
+`returningCycle` (nine total).
 
 `HarmonyTypeConfig` includes `name`, `description`, `shortDescription`,
 `processEffect`, optional `onBarChange`, `initEffect`, optional live `qiCostMultiplier` and
 `stabilityCostMultiplier`, `renderComponent`, icon/colour fields,
 `complexityMultiplier`, optional `startingHarmony`, `unlockFlag`, and
 `statTable`.
+
+Crafting **stat keys** are now `qiCostReduction`, `qiCostPenalty`,
+`stabilityCostReduction`, and `stabilityCostPenalty`, replacing the old cost
+multiplier stats. These are distinct from the still-valid `HarmonyTypeConfig`
+callbacks `qiCostMultiplier` and `stabilityCostMultiplier` above.
 
 Persisted enhanced equipment uses:
 
@@ -385,8 +411,56 @@ utils.getCraftingEquipmentStats(realm, progress, factors, type)
 utils.getClothingDefense(realm, scale)
 utils.getClothingCharisma(realm, mult)
 utils.getBreakthroughCharisma(realm, mult)
-utils.calculateDamage(attackPower, defenderDefense, defenderDr, defenderDefenseFactor, maxReduction, defenderVulnerability, realm, realmProgress, defenderProtection, cultivatorResistance)
+utils.calculateDamage(attackPower, defenderDefense, defenderDr, defenderVulnerability, realm, realmProgress, defenderProtection)
 ```
+
+Combat uses unified player/enemy health; the damage helper takes no defense
+factor or cultivator-resistance argument.
+
+## Utility Functions — Mastery Builders
+
+All are on `utils`; combat helpers return `TechniqueMasteryRarityMap`, crafting
+helpers return `CraftingTechniqueMasteryRarityMap` unless noted.
+
+```
+createUpgradeMap(key, rarity, upgrades)
+createUpgradeMapSimple(key, rarity, tooltip, shouldMultiply, changes, renderTransform?)
+createUpgradeMapStepped(key, rarity, tooltip, maxChange, shouldMultiply?, renderTransform?)
+create30PercentUpgradeMap(key, rarity, tooltip)
+createPowerUpgradeMap(key, rarity)
+createScalingUpgradeMap(key, rarity)
+createDamageUpgradeMap(key, rarity)
+createHealingUpgradeMap(key, rarity, buffName?)
+createBarrierUpgradeMap(key, rarity)
+createTemporaryHealthUpgradeMap(key, rarity)
+createStacksUpgradeMap(key, rarity, buffName, maxChange)
+createCleanseUpgradeMap(key, rarity, buffName, maxChange, verb)
+createStacksInflictedUpgradeMap(key, rarity, buffName, maxChange)
+createCostUpgradeMap(key, rarity, buffName, maxChange)
+createRequirementUpgradeMap(key, rarity, buffName, maxChange)
+createMaxIncreaseUpgradeMap(key, rarity, buffNameOrNames, maxChange)
+createSingleTierMastery(mastery)
+createRoundBuffMap(buff, rarity, chanceStep, effectKind?)
+createStackingRoundBuffMap(buff, rarity, stacks, effectKind?)
+createFullKindMap(rarityMap) // Returns TechniqueMasteryKindMap
+
+createCraftingUpgradeMap(key, rarity, upgrades)
+createCraftingUpgradeMapSimple(key, rarity, tooltip, shouldMultiply, changes, renderTransform?)
+createCraftingUpgradeMapStepped(key, rarity, tooltip, maxChange)
+createCraftingPowerUpgradeMap(key, rarity, tooltip)
+createCraftingPerfectionUpgradeMap(key, rarity)
+createCraftingCompletionUpgradeMap(key, rarity)
+createCraftingPoolUpgradeMap(key, rarity)
+createCraftingStabilityUpgradeMap(key, rarity)
+createCraftingStacksUpgradeMap(key, rarity, buffName, maxChange)
+createCraftingCostUpgradeMap(key, rarity, buffName, maxChange)
+createCraftingMaxIncreaseUpgradeMap(key, rarity, buffNameOrNames, maxChange)
+```
+
+`upgrades` is a `Record<Rarity, { tooltip, change, shouldMultiply? } | undefined>`;
+`changes` is a `Record<Rarity, number | undefined>`. Simple/stepped tooltips use
+`{change}`. Stepped helpers reach `maxChange` at incandescent, not transcendent.
+Round-buff `effectKind` is `'buffSelf'` (default) or `'buffTarget'`.
 
 ## Utility Functions — Quest Templates
 
@@ -414,7 +488,6 @@ utils.itm(item)            // Pink — item names
 utils.char(text)           // Green — character names
 utils.elem(element)        // Styled technique element
 utils.t(value, variables?, context?) // Translate immediately
-utils.tPlural(count, one, other, variables?) // Translate pluralized copy
 utils.tr(key, variables?, context?) // Deferred translation object for data definitions
 ```
 
@@ -431,23 +504,34 @@ utils.showToast(message, timeout, style, customStyle) // { bg?, border?, color? 
 
 `message` accepts `React.ReactNode` (strings, JSX elements, etc.).
 
-## Utility Functions — Tooltip (Screen/Options/InjectUI Context)
+## Utility Functions — Tooltips & Components
 
-Available on `api.utils` inside screen components, options panels, and injectUI generators (on `ModReduxAPI`, not `window.modAPI.utils`).
-
-```
-api.utils.parseTooltipLine(tooltip)                         // Parse tooltip string -> styled ReactNode
-api.utils.expandTooltipTemplate(template, templateValues, addPeriod?)  // Expand <N> placeholders
-api.utils.expandTooltipTags(template)                       // Expand <tag> syntax to display text
-```
-
-Components for rendering tooltips (also on `api.components`):
+Available on both `window.modAPI.utils` and `api.utils` in screen, options, and
+injectUI contexts:
 
 ```
-api.components.GameTooltip      // Tooltip wrapper (provider, children, flipped?, disabled?, minimal?)
-api.components.GameTooltipBox   // Tooltip content box (isSecondary?, isAux?, removeWidthLimit?)
-api.components.TooltipLine      // Single tooltip line (children)
+utils.parseTooltipLine(tooltip) // Expanded tooltip string -> ReactNode
+utils.expandTooltipTemplate(template, templateValues, addPeriod?) // Map<string, string>; {key} placeholders
+utils.expandTooltipTags(template) // Tooltip markup tags -> HTML spans
 ```
+
+Components are exposed on both `window.modAPI.components` and `api.components`:
+
+```
+components.GameTooltip      // Tooltip wrapper (provider, children, flipped?, disabled?, minimal?)
+components.GameTooltipBox   // Tooltip content box (isSecondary?, isAux?, removeWidthLimit?)
+components.TooltipLine      // Single tooltip line (children)
+components.ItemComponent    // Inventory cell; required item and equipped props
+components.tooltips        // ItemTooltip, TechniqueTooltip, CraftingBuffTooltip, etc.
+components.recipes         // RecipesComponent, RecipeRow, RecipeDetails, RecipeIngredients, etc.
+components.ChildhoodIcon
+components.childhoodGlyphs
+components.physicalStatToIcon
+```
+
+Each built-in tooltip/recipe component has exported props in `components.d.ts`.
+Use `utils.defaultRecipeStats` and `utils.defaultProgressState` when building
+crafting previews outside an active session; do not mutate these shared defaults.
 
 ## Utility Functions — Save Management
 
@@ -474,8 +558,15 @@ utils.flag(flag)           // Convert flag name to game flag format
 utils.evalExp(exp, flags)  // Evaluate expression against flags (floors result > 3)
 utils.evalExpNoFloor(exp, flags)
 utils.evaluateScaling(scaling, variables, stanceLength, preMaxTransform?)
-utils.generateSkipTutorialFlags(tutorials[], triggers[])
+utils.getNextCondition(progress, entity?)
+utils.getMaxCompletion(recipe, recipeStats, realm, maxStepsBoost?)
+utils.getMaxPerfection(recipe, recipeStats, realm, maxStepsBoost?)
 ```
+
+`Scaling.keepEqnForTooltip` replaces `removeEqnForTooltip`.
+`getNextCondition` uses randomness; pass the crafting entity to account for
+`discordantConditions` buffs. The quality-cap helpers return `{ flat, percentage }`;
+`maxStepsBoost` supplies bonus threshold steps (e.g. `bonusMaximumQuality`).
 
 ## Game Data Collections
 
@@ -485,6 +576,7 @@ Access via `window.modAPI.gameData`:
 items                    Record<string, Item>
 characters               Record<string, Character>
 techniques               Record<string, Technique>
+combatVfx                Record<string, TechniqueVfx>
 locations                Record<string, GameLocation>
 quests                   Record<string, Quest>
 manuals                  Record<string, ManualItem>
@@ -502,7 +594,8 @@ rooms                    Room[]
 guilds                   Record<string, Guild>
 puppets                  PuppetType[]
 alternativeStarts        AlternativeStart[]
-backgrounds              { birth, child, teen }
+startingTreasures        StartingTreasure[]
+backgrounds              { child: Background[], treasures: StartingTreasure[] }
 techniqueBuffs           { blood, blossom, celestial, cloud, fist, weapon }
 mysticalRegionBlessings  Blessing[]
 mysticalRegionDefinitions Record<string, MysticalRegionDefinition>
@@ -516,9 +609,10 @@ soulShardDelves          Record<string, SoulShardDelveConfig>
 tutorials                { newGameTutorials, tutorialTriggers }
 mineConfigs              Record<string, MineConfig>
 uncutStones              Record<Realm, UncutStonePool | undefined>
+tournamentConfigs        TournamentConfig[]
 ```
 
-## 0.7.6 Snapshot State
+## 0.7.17 Snapshot State
 
 - `research.queue` holds material, remaining/discovered recipes, progress, and
   optional `materialReturned`; `research.glyphs` holds harmony glyphs that
@@ -528,9 +622,16 @@ uncutStones              Record<Realm, UncutStonePool | undefined>
   `progression`. There is no floor/max-floor pair.
 - Player formation/delve layouts are named persisted layouts with placements;
   use their typed `current*Layout` / `stored*Layouts` fields.
-- `tournament` keeps source step, candidate fighters, previous rounds, and the
-  current round; tournament completion hooks receive `victory`, `second`, or
-  `defeat`.
+- `sect` holds rank, generated `disciples`, `authoredMembers`, population targets
+  and events, plus optional promotion tournaments, world disciples, and services.
+- `tournament` stores `tournamentId`, seed, optional character fighters, previous
+  and current rounds, carried `fighterHealth`, `tournamentBuffs`, and optional
+  crafting challenge/results. Static rules/rewards live in `gameData.tournamentConfigs`;
+  completion hooks still receive `victory`, `second`, or `defeat`.
+- `characters` exposes `followingCharacter`, `followingRemainingMonths`, and
+  optional `additionalFollowingCharacters`; there is no `followSlotMember`.
+- Event `HistoryItem.text` is `Translatable`, not necessarily a string; resolve
+  with `utils.t()` for display rather than applying string methods directly.
 - Explore repeat bookkeeping is
   `location.currentLocationLastEvent` plus
   `location.currentLocationLastEventCount`. Authored events can set

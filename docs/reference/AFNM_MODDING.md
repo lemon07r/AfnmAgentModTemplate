@@ -67,7 +67,10 @@ If used, keep it inside a small adapter with `try/catch` boundaries, document th
 
 ## Working With the Installed Game Runtime
 
-The runtime oracle (`scripts/installed-game-runtime.js`) extracts the installed game's Electron asar bundle and lets you grep it without launching Steam.
+The runtime oracle (`scripts/installed-game-runtime.js`) selectively extracts
+`package.json` and `dist-electron` runtime files, skipping media assets. It handles
+the >2 GB archive without full extraction and caches under
+`~/.local/tmp/afnm-template/installed-game-runtime/` for inspection without Steam.
 
 ```bash
 # Print a parity summary (version, hooks, launcher behavior)
@@ -104,14 +107,14 @@ Use live testing only when the oracle is insufficient (e.g., UI smoke tests, vis
 4. For DevTools access: launch with `--remote-debugging-port=9222`, then open `chrome://inspect` in Chrome
 5. **Delete `disable_steam` when done** — leaving it behind blocks Workshop mod loading
 
-## Known API Gaps (as of AFNM 0.7.6)
+## Known API Gaps (as of AFNM 0.7.17)
 
-These game behaviors have no official ModAPI interception point:
+The 0.7.17 declarations expose no dedicated root ModAPI for these cases:
 
 | Gap | Workaround |
 |-----|-----------|
-| World map event `triggerChance` | Use `addMapEventsToLocation` or `addEventsToLocation` instead |
-| Auto-battle state | Not in `getGameStateSnapshot()`; DOM inspection is the only fallback |
+| World map event `triggerChance` interception | Register authored events with `addMapEventsToLocation` or `addEventsToLocation`; there is no dedicated chance hook |
+| Auto-battle toggle state | No typed snapshot field; verify the current UI before considering a DOM/fiber fallback |
 | Crafting action dispatch outside an active crafting screen | Inside screens/options use `api.actions.executeCraftingTechnique()` and `api.actions.previewCraftingTechnique()`; outside that context there is no standalone root ModAPI action |
 | Post-weight-expansion explore events | `onGenerateExploreEvents` fires before expansion; see SUPPLEMENTARY_GUIDE.md §3 |
 
@@ -138,8 +141,9 @@ For method signatures and hook parameters, see `MODAPI_QUICK_REFERENCE.md`. For 
 - React, ReactDOM, MUI, and MUI Icons are provided by the game runtime — externalize them in webpack (see `typescript-afnm` skill)
 - The game runtime exposes `window.React` — use it for `createElement` calls when JSX is not available
 - `registerOptionsUI` components receive `{ api }` with `api.components.GameButton` and `api.actions`
-- Tooltip utilities and components are on `ModReduxAPI` — available in screen, options, and injectUI contexts only
+- Tooltip utilities and components are on both root `ModAPI` and screen-context `ModReduxAPI`; see the quick reference for the registries
 - `injectUI` supports screen-specific sub-slots (see `MODAPI_QUICK_REFERENCE.md` § injectUI Slot Names)
+- Controller support and DOM changes in 0.7.17 can affect injection selectors; inspect the current client rather than assuming old selectors still match
 
 ### Hooks & Actions
 
